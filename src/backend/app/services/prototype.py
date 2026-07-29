@@ -2497,10 +2497,12 @@ def _patch_blank_cust(src: str) -> tuple[str, bool]:
 
 def _patch_login_email(src: str) -> tuple[str, bool]:
     """Prototype ghi cứng email prefill của tác giả. Lấy theo LOGIN_DEFAULT_EMAIL để
-    người dùng bấm Gửi mã là xong, không phải gõ lại mỗi lần reload."""
+    người dùng bấm Gửi mã là xong, không phải gõ lại mỗi lần reload.
+
+    LOGIN_DEFAULT_EMAIL để trống nghĩa là không điền sẵn: ô email phải rỗng. Bỏ qua
+    việc patch ở đây sẽ để lộ lại email hard-code trong prototype, nên vẫn phải thay
+    — chỉ là thay bằng chuỗi rỗng."""
     default = settings.login_default_email.strip()
-    if not default:
-        return src, False
     old = "loginStep: 'email', email: 'khanhpp@vng.com.vn'"
     new = f"loginStep: 'email', email: '{default}'"
     if old not in src:
