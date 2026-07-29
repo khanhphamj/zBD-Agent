@@ -1,0 +1,78 @@
+- generic [ref=f3e38]:
+  - generic [ref=f3e39]:
+    - generic "Về Dashboard" [ref=f3e41] [cursor=pointer]: zBD Agent
+    - generic [ref=f3e44]:
+      - generic [ref=f3e45] [cursor=pointer]: Dashboard
+      - generic [ref=f3e48] [cursor=pointer]: Khách hàng
+      - generic [ref=f3e51] [cursor=pointer]: Proposal
+      - generic [ref=f3e54] [cursor=pointer]: Product Knowledge
+      - generic [ref=f3e57] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f3e60] [cursor=pointer]: Template Library
+    - generic [ref=f3e63]:
+      - generic [ref=f3e64] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f3e68] [cursor=pointer]: Quản trị
+      - generic [ref=f3e71]:
+        - generic "Hồ sơ & cài đặt" [ref=f3e72] [cursor=pointer]:
+          - generic [ref=f3e73]: za
+          - generic [ref=f3e75]: zaloadmin
+        - generic "Đăng xuất" [ref=f3e77] [cursor=pointer]
+  - generic [ref=f3e82]:
+    - generic [ref=f3e83]:
+      - generic [ref=f3e84] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f3e85]: ⌘K
+      - generic [ref=f3e86]:
+        - generic [ref=f3e87]: "6"
+        - generic [ref=f3e91]: za
+    - generic [ref=f3e270]:
+      - generic [ref=f3e271]:
+        - generic [ref=f3e272]: Chào zaloadmin 👋
+        - generic [ref=f3e273]: Chạy Deep Research khách hàng mới
+      - generic [ref=f3e276]:
+        - generic [ref=f3e277] [cursor=pointer]:
+          - generic [ref=f3e279]: "2"
+          - generic [ref=f3e280]: Khách hàng phụ trách
+        - generic [ref=f3e281] [cursor=pointer]:
+          - generic [ref=f3e283]: "0"
+          - generic [ref=f3e284]: Đang Deep Research
+        - generic [ref=f3e285] [cursor=pointer]:
+          - generic [ref=f3e287]: "2"
+          - generic [ref=f3e288]: Hoàn tất nghiên cứu
+        - generic [ref=f3e289] [cursor=pointer]:
+          - generic [ref=f3e291]: "0"
+          - generic [ref=f3e292]: Proposal đang soạn
+        - generic [ref=f3e293] [cursor=pointer]:
+          - generic [ref=f3e295]: "0"
+          - generic [ref=f3e296]: Khách đang trao đổi
+        - generic [ref=f3e297] [cursor=pointer]:
+          - generic [ref=f3e299]: "0"
+          - generic [ref=f3e300]: Proposal hoàn tất
+      - generic [ref=f3e301]:
+        - generic [ref=f3e302]:
+          - generic [ref=f3e303]:
+            - generic [ref=f3e304]: Khách hàng cập nhật gần đây
+            - generic [ref=f3e305] [cursor=pointer]: Xem tất cả
+          - generic [ref=f3e306]:
+            - generic [ref=f3e307]: Doanh nghiệp
+            - generic [ref=f3e308]: Ngành
+            - generic [ref=f3e309]: Trạng thái
+            - generic [ref=f3e310]: Cập nhật
+          - generic [ref=f3e311] [cursor=pointer]:
+            - generic [ref=f3e315]:
+              - generic [ref=f3e316]: LONGCHAU
+              - generic [ref=f3e317]: nhathuoclongchau.com.vn
+            - generic [ref=f3e318]: Bán lẻ dược phẩm & Chăm sóc sức khỏe
+            - generic [ref=f3e319]: Hoàn tất nghiên cứu
+            - generic [ref=f3e321]: 4 phút trước
+          - generic [ref=f3e322] [cursor=pointer]:
+            - generic [ref=f3e326]:
+              - generic [ref=f3e327]: VIE
+              - generic [ref=f3e328]: vietmoney.vn
+            - generic [ref=f3e329]: Tài chính tiêu dùng / Dịch vụ cầm đồ
+            - generic [ref=f3e330]: Hoàn tất nghiên cứu
+            - generic [ref=f3e332]: 10 phút trước
+        - generic [ref=f3e333]:
+          - generic [ref=f3e334]: Proposal gần đây
+          - generic [ref=f3e336]:
+            - generic [ref=f3e337]: Sản phẩm được đề xuất nhiều
+            - generic [ref=f3e338]: Chưa có dữ liệu đề xuất. Chạy matching giải pháp cho khách hàng để thống kê xuất hiện ở đây.

@@ -1,0 +1,226 @@
+- generic [ref=f4e59]:
+  - generic [ref=f4e60]:
+    - generic "Về Dashboard" [ref=f4e62] [cursor=pointer]: zBD Agent
+    - generic [ref=f4e65]:
+      - generic [ref=f4e66] [cursor=pointer]: Dashboard
+      - generic [ref=f4e69] [cursor=pointer]: Khách hàng
+      - generic [ref=f4e72] [cursor=pointer]: Proposal
+      - generic [ref=f4e75] [cursor=pointer]: Product Knowledge
+      - generic [ref=f4e78] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f4e81] [cursor=pointer]: Template Library
+    - generic [ref=f4e84]:
+      - generic [ref=f4e85] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f4e89] [cursor=pointer]: Quản trị
+      - generic [ref=f4e92]:
+        - generic "Hồ sơ & cài đặt" [ref=f4e93] [cursor=pointer]:
+          - generic [ref=f4e94]: kh
+          - generic [ref=f4e96]: khanhpp
+        - generic "Đăng xuất" [ref=f4e98] [cursor=pointer]
+  - generic [ref=f4e103]:
+    - generic [ref=f4e104]:
+      - generic [ref=f4e105] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f4e106]: ⌘K
+      - generic [ref=f4e107]:
+        - generic [ref=f4e108]: "3"
+        - generic [ref=f4e112]: kh
+    - generic [ref=f4e438]:
+      - generic [ref=f4e439]:
+        - generic [ref=f4e440]:
+          - generic [ref=f4e441]: Product Knowledge Hub
+          - generic [ref=f4e442]: "4 giải pháp ZBS: OA · Business Message · Mini App · Zalo AI · nguồn: zalo.solutions, oa.zalo.me, mini.zalo.me, zalo.ai · cập nhật 26/07/2026"
+        - generic [ref=f4e444]:
+          - generic [ref=f4e445] [cursor=pointer]: Cập nhật dữ liệu nguồn
+          - generic [ref=f4e446] [cursor=pointer]: + Thêm sản phẩm
+      - generic [ref=f4e447]:
+        - generic [ref=f4e448] [cursor=pointer]: Tất cả
+        - generic [ref=f4e449] [cursor=pointer]: Tương tác
+        - generic [ref=f4e450] [cursor=pointer]: Tự động hóa
+        - generic [ref=f4e451] [cursor=pointer]: Marketing
+        - generic [ref=f4e452] [cursor=pointer]: Tích hợp
+        - generic [ref=f4e453] [cursor=pointer]: Quản lý
+        - generic [ref=f4e454] [cursor=pointer]: Gói & giá
+        - generic [ref=f4e455]: 12 tính năng
+    - generic [ref=f4e456]:
+      - generic [ref=f4e457] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e459]
+        - generic [ref=f4e460]:
+          - generic [ref=f4e463]:
+            - generic [ref=f4e464]: Tin nhắn cơ bản
+            - generic [ref=f4e465]: Tương tác khách hàng
+          - generic [ref=f4e466]: Active
+        - generic [ref=f4e467]: "Tương tác hai chiều với người dùng Zalo: tin tư vấn (văn bản, hình ảnh, nút CTA, biểu mẫu), tin nhóm GMF và tin Broadcast tới 100% người quan tâm."
+        - generic [ref=f4e468]:
+          - generic [ref=f4e469]: Tin tư vấn
+          - generic [ref=f4e470]: Broadcast
+          - generic [ref=f4e471]: Nhóm GMF
+        - generic [ref=f4e472]:
+          - generic [ref=f4e473]: Mọi gói OA
+          - generic [ref=f4e474]: 55 đ/tin ngoài khung 48h
+      - generic [ref=f4e475] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e477]
+        - generic [ref=f4e478]:
+          - generic [ref=f4e481]:
+            - generic [ref=f4e482]: Gọi thoại & Brandname Call
+            - generic [ref=f4e483]: Tương tác khách hàng
+          - generic [ref=f4e484]: Active
+        - generic [ref=f4e485]: Gọi thoại/video có hiển thị thương hiệu tới khách hàng. Vận hành qua tổng đài viên MCC hoặc ZCC.
+        - generic [ref=f4e486]:
+          - generic [ref=f4e487]: Voice
+          - generic [ref=f4e488]: Brandname
+          - generic [ref=f4e489]: Tổng đài
+        - generic [ref=f4e490]:
+          - generic [ref=f4e491]: Cần gói Tiêu chuẩn / Tăng trưởng / Toàn diện
+          - generic [ref=f4e492]: Theo gói dịch vụ
+      - generic [ref=f4e493] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e495]
+        - generic [ref=f4e496]:
+          - generic [ref=f4e499]:
+            - generic [ref=f4e500]: Menu & Chatbot
+            - generic [ref=f4e501]: Tự động hóa
+          - generic [ref=f4e502]: Active
+        - generic [ref=f4e503]: Trả lời tự động và tức thời qua menu truy vấn hoặc kịch bản Chatbot trong cửa sổ chat.
+        - generic [ref=f4e504]:
+          - generic [ref=f4e505]: Chatbot
+          - generic [ref=f4e506]: Menu chat
+          - generic [ref=f4e507]: Tự phục vụ
+        - generic [ref=f4e508]:
+          - generic [ref=f4e509]: Cần gói Tiêu chuẩn / Tăng trưởng / Toàn diện
+          - generic [ref=f4e510]: Theo gói dịch vụ
+      - generic [ref=f4e511] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e513]
+        - generic [ref=f4e514]:
+          - generic [ref=f4e517]:
+            - generic [ref=f4e518]: ZBS Template Message
+            - generic [ref=f4e519]: Business Message
+          - generic [ref=f4e520]: Active
+        - generic [ref=f4e521]: "Tin mẫu đã kiểm duyệt gửi tới UID hoặc số điện thoại Zalo. 6 loại tin: Mã xác thực (OTP), Giao dịch, Khuyến mãi, Hình ảnh, Khảo sát, Thanh toán liên ngân hàng."
+        - generic [ref=f4e522]:
+          - generic [ref=f4e523]: Mã xác thực
+          - generic [ref=f4e524]: Giao dịch
+          - generic [ref=f4e525]: Khuyến mãi
+          - generic [ref=f4e526]: Khảo sát
+          - generic [ref=f4e527]: Thanh toán
+        - generic [ref=f4e528]:
+          - generic [ref=f4e529]: Cần gói Tăng trưởng / Toàn diện
+          - generic [ref=f4e530]: Xem zalo.solutions/zns/pricing
+      - generic [ref=f4e531] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e533]
+        - generic [ref=f4e534]:
+          - generic [ref=f4e537]:
+            - generic [ref=f4e538]: Nội dung & Bài viết
+            - generic [ref=f4e539]: Marketing & Truyền thông
+          - generic [ref=f4e540]: Active
+        - generic [ref=f4e541]: Xuất bản bài viết, video trên OA và gửi trực tiếp tới người quan tâm; quản lý bình luận tập trung.
+        - generic [ref=f4e542]:
+          - generic [ref=f4e543]: Bài viết
+          - generic [ref=f4e544]: Video
+          - generic [ref=f4e545]: Bình luận
+        - generic [ref=f4e546]:
+          - generic [ref=f4e547]: Cần gói Tiêu chuẩn / Tăng trưởng / Toàn diện
+          - generic [ref=f4e548]: Theo gói dịch vụ
+      - generic [ref=f4e549] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e551]
+        - generic [ref=f4e552]:
+          - generic [ref=f4e555]:
+            - generic [ref=f4e556]: Nhóm chat OA
+            - generic [ref=f4e557]: Tương tác khách hàng
+          - generic [ref=f4e558]: Active
+        - generic [ref=f4e559]: Xây dựng cộng đồng khách hàng trong nhóm do OA quản lý, giữ uy tín và kiểm soát nội dung.
+        - generic [ref=f4e560]:
+          - generic [ref=f4e561]: Cộng đồng
+          - generic [ref=f4e562]: Nhóm chat
+        - generic [ref=f4e563]:
+          - generic [ref=f4e564]: Cần gói Tăng trưởng / Toàn diện
+          - generic [ref=f4e565]: Từ 25.000 đ/nhóm/tháng
+      - generic [ref=f4e566] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e568]
+        - generic [ref=f4e569]:
+          - generic [ref=f4e572]:
+            - generic [ref=f4e573]: Zalo OA OpenAPI
+            - generic [ref=f4e574]: Mở rộng
+          - generic [ref=f4e575]: Active
+        - generic [ref=f4e576]: Vận hành nhiều OA tự động và đồng bộ dữ liệu với hệ thống nội bộ hoặc bên thứ ba (CDP, CRM, POS, ERP, Omni-channel, Chatbot).
+        - generic [ref=f4e577]:
+          - generic [ref=f4e578]: Nhắn tin UID
+          - generic [ref=f4e579]: Webhook
+          - generic [ref=f4e580]: CRM/CDP/POS/ERP
+        - generic [ref=f4e581]:
+          - generic [ref=f4e582]: Cần gói Tăng trưởng / Toàn diện
+          - generic [ref=f4e583]: Miễn phí (theo gói)
+      - generic [ref=f4e584] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e586]
+        - generic [ref=f4e587]:
+          - generic [ref=f4e590]:
+            - generic [ref=f4e591]: MiniCRM & Báo cáo
+            - generic [ref=f4e592]: Quản lý vận hành
+          - generic [ref=f4e593]: Active
+        - generic [ref=f4e594]: Trang thông tin khách hàng, dashboard thống kê tương tác, lịch sử hoạt động và phân quyền nhân sự.
+        - generic [ref=f4e595]:
+          - generic [ref=f4e596]: CRM
+          - generic [ref=f4e597]: Dashboard
+          - generic [ref=f4e598]: Phân quyền
+        - generic [ref=f4e599]:
+          - generic [ref=f4e600]: Cần gói Tiêu chuẩn / Tăng trưởng / Toàn diện
+          - generic [ref=f4e601]: Theo gói dịch vụ
+      - generic [ref=f4e602] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e604]
+        - generic [ref=f4e605]:
+          - generic [ref=f4e608]:
+            - generic [ref=f4e609]: Tiện ích OA
+            - generic [ref=f4e610]: Mở rộng
+          - generic [ref=f4e611]: Active
+        - generic [ref=f4e612]: Cài đặt tiện ích bổ sung vào OA để mở rộng nghiệp vụ mà không cần tự phát triển.
+        - generic [ref=f4e613]:
+          - generic [ref=f4e614]: Extension
+          - generic [ref=f4e615]: Marketplace
+        - generic [ref=f4e616]:
+          - generic [ref=f4e617]: Cần gói Tiêu chuẩn / Tăng trưởng / Toàn diện
+          - generic [ref=f4e618]: Theo từng tiện ích
+      - generic [ref=f4e619] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e621]
+        - generic [ref=f4e622]:
+          - generic [ref=f4e625]:
+            - generic [ref=f4e626]: Zalo Mini App
+            - generic [ref=f4e627]: Mở rộng
+          - generic [ref=f4e628]: Active
+        - generic [ref=f4e629]: "Ứng dụng chạy trong Zalo, liên kết với OA: đặt hàng, loyalty, self-service — người dùng không cần cài đặt."
+        - generic [ref=f4e630]:
+          - generic [ref=f4e631]: Loyalty
+          - generic [ref=f4e632]: Đặt hàng
+          - generic [ref=f4e633]: Self-service
+        - generic [ref=f4e634]:
+          - generic [ref=f4e635]: Cần gói Tăng trưởng / Toàn diện
+          - generic [ref=f4e636]: Xem mini.zalo.me
+      - generic [ref=f4e637] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e639]
+        - generic [ref=f4e640]:
+          - generic [ref=f4e643]:
+            - generic [ref=f4e644]: Zalo AI
+            - generic [ref=f4e645]: Giải pháp AI
+          - generic [ref=f4e646]: Active
+        - generic [ref=f4e647]: "Năng lực AI của Zalo tích hợp vào giải pháp doanh nghiệp: chatbot AI, giọng nói (TTS/STT), OCR & eKYC — tự động hóa CSKH và nâng trải nghiệm số."
+        - generic [ref=f4e648]:
+          - generic [ref=f4e649]: Chatbot AI
+          - generic [ref=f4e650]: TTS/STT
+          - generic [ref=f4e651]: OCR & eKYC
+        - generic [ref=f4e652]:
+          - generic [ref=f4e653]: Hợp đồng riêng
+          - generic [ref=f4e654]: Liên hệ tư vấn
+      - generic [ref=f4e655] [cursor=pointer]:
+        - generic "Tùy chọn" [ref=f4e657]
+        - generic [ref=f4e658]:
+          - generic [ref=f4e661]:
+            - generic [ref=f4e662]: Gói dịch vụ OA
+            - generic [ref=f4e663]: Thương mại
+          - generic [ref=f4e664]: Active
+        - generic [ref=f4e665]: Bốn gói cho OA đã xác thực. Gói quyết định quyền truy cập tính năng và hạn mức đi kèm.
+        - generic [ref=f4e666]:
+          - generic [ref=f4e667]: Bảng giá
+          - generic [ref=f4e668]: Nâng cấp
+        - generic [ref=f4e669]:
+          - generic [ref=f4e670]: Mọi gói OA
+          - generic [ref=f4e671]: Bảng giá hiệu lực 01/06/2026
+      - generic [ref=f4e672] [cursor=pointer]:
+        - generic [ref=f4e674]: Thêm sản phẩm mới
+        - generic [ref=f4e675]: Tạo Product Profile → thêm nguồn →crawl → Admin cập nhật → publish

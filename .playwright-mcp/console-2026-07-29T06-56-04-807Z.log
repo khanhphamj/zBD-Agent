@@ -1,0 +1,5 @@
+[      80ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:430
+[     403ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 9 khách hàng, 1 proposal, 0 KB, 0 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[   17704ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 9 khách hàng, 1 proposal, 0 KB, 0 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[   20028ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://icons.duckduckgo.com/ip3/napas.com.vn.ico:0
+[   22822ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://icons.duckduckgo.com/ip3/tpb.vn.ico:0

@@ -1,0 +1,5 @@
+[     110ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:537
+[     118ms] [ERROR] Bundle unpack error: SyntaxError: Unexpected non-whitespace character after JSON at position 645677 (line 2 column 645677)
+    at JSON.parse (<anonymous>)
+    at HTMLDocument.<anonymous> (http://localhost:8000/:77:25) @ http://localhost:8000/:370
+[     288ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 3 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347

@@ -1,0 +1,6 @@
+[     221ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:934
+[     725ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 1 KB, 4 skill, 3 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm, 0 thông báo, 0 sản phẩm được đề xuất nhiều @ http://localhost:8000/zb-api-bridge.js:536
+[   15956ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 1 KB, 4 skill, 3 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm, 0 thông báo, 0 sản phẩm được đề xuất nhiều @ http://localhost:8000/zb-api-bridge.js:536
+[   19055ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/v1/templates/tpl_2e925e61c0/thumbnail:0
+[   19056ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/v1/templates/tpl_56d67ad28f/thumbnail:0
+[   19056ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/v1/templates/tpl_4853fbca49/thumbnail:0

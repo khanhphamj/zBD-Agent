@@ -1,0 +1,6 @@
+[      97ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://127.0.0.1:8000/zb-api-bridge.js:308
+[     497ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/favicon.ico:0
+[   27117ms] [ERROR] Failed to load resource: the server responded with a status of 403 (Forbidden) @ http://127.0.0.1:8000/api/v1/auth/otp/request:0
+[   27122ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/api/v1/auth/otp/request:0
+[   50513ms] [ERROR] Failed to load resource: the server responded with a status of 400 (Bad Request) @ http://127.0.0.1:8000/api/v1/auth/otp/verify:0
+[   50676ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 7 khách hàng, 1 proposal, 4 KB, 5 skill, 3 template, 6 sản phẩm @ http://127.0.0.1:8000/zb-api-bridge.js:243

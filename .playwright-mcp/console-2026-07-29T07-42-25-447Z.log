@@ -1,0 +1,7 @@
+[     210ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:559
+[     562ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 3 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[   14887ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 3 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[   51685ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 4 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[   98863ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 5 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[  132077ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 1 KB, 5 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[  132132ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 1 KB, 5 skill, 1 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347

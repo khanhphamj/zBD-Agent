@@ -1,0 +1,3 @@
+[     144ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:669
+[     602ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 4 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm @ http://localhost:8000/zb-api-bridge.js:406
+[   15272ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 4 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm @ http://localhost:8000/zb-api-bridge.js:406

@@ -1,0 +1,13 @@
+[      87ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:430
+[     465ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 0 skill, 0 template, 8 danh bạ, 0 yêu cầu, 9 người dùng (Product Knowledge giữ dữ liệu tĩnh của prototype) @ http://localhost:8000/zb-api-bridge.js:347
+[     469ms] [ERROR] TypeError: Cannot read properties of undefined (reading 'short')
+    at Component._stAutoName (eval at evalDcLogic (blob:http://localhost:8000/76c9debb-8035-4bab-b54b-534727412100:844:16), <anonymous>:388:187)
+    at Component._vals (eval at evalDcLogic (blob:http://localhost:8000/76c9debb-8035-4bab-b54b-534727412100:844:16), <anonymous>:1992:62)
+    at Component.renderVals (eval at evalDcLogic (blob:http://localhost:8000/76c9debb-8035-4bab-b54b-534727412100:844:16), <anonymous>:1517:41)
+    at StreamableComponent.render (blob:http://localhost:8000/76c9debb-8035-4bab-b54b-534727412100:1085:48)
+    at Af (blob:http://localhost:8000/e5f05354-8e79-4ed7-97af-dbf61b9ebc51:133:101)
+    at ri (blob:http://localhost:8000/e5f05354-8e79-4ed7-97af-dbf61b9ebc51:132:399)
+    at Qk (blob:http://localhost:8000/e5f05354-8e79-4ed7-97af-dbf61b9ebc51:252:71)
+    at Ri (blob:http://localhost:8000/e5f05354-8e79-4ed7-97af-dbf61b9ebc51:195:185)
+    at Ok (blob:http://localhost:8000/e5f05354-8e79-4ed7-97af-dbf61b9ebc51:195:116)
+    at Nd (blob:http://localhost:8000/e5f05354-8e79-4ed7-97af-dbf61b9ebc51:194:492) @ blob:http://localhost:8000/76c9debb-8035-4bab-b54b-534727412100:1086

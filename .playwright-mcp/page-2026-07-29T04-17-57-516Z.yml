@@ -1,0 +1,407 @@
+- generic [ref=e3]:
+  - generic [ref=e5]:
+    - generic [ref=e7]:
+      - link [ref=e8] [cursor=pointer]:
+        - /url: /
+        - img "Claude" [ref=e9]
+      - main [ref=e14]:
+        - generic [ref=e17]:
+          - heading "Question what’s next" [level=2] [ref=e18]: Question what’snext
+          - heading "Your thinking partner for big ambitions" [level=3] [ref=e19]
+          - generic [ref=e20]:
+            - generic [ref=e22]:
+              - button [ref=e23] [cursor=pointer]:
+                - img "Google logo" [ref=e24]
+                - text: Continue with Google
+              - paragraph [ref=e25]: or
+              - generic [ref=e27]:
+                - textbox "Email" [ref=e28]:
+                  - /placeholder: Enter your email
+                - generic [ref=e29]:
+                  - button "Continue with email" [ref=e31] [cursor=pointer]
+                  - button [ref=e34] [cursor=pointer]:
+                    - generic [ref=e36]: Continue with SSO
+            - generic [ref=e38]:
+              - text: By continuing, you acknowledge Anthropic’s
+              - link "Privacy Policy (opens in a new tab)" [ref=e39] [cursor=pointer]:
+                - /url: https://www.anthropic.com/legal/archive/21d66aa9-68f6-4356-ba01-2825b0f81805
+                - text: Privacy Policy
+                - generic [ref=e40]: (opens in a new tab)
+              - text: .
+          - button "Download desktop app" [ref=e42] [cursor=pointer]
+      - generic [ref=e50]:
+        - heading "Explore plans" [level=2] [ref=e53]
+        - group [ref=e56]:
+          - radio "Individual plans" [checked] [ref=e57] [cursor=pointer]: Individual
+          - radio "Team and Enterprise plans" [ref=e58] [cursor=pointer]: Team and Enterprise
+          - generic:
+            - generic:
+              - generic: Individual
+              - generic: Team and Enterprise
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e67]:
+              - heading "Free" [level=3] [ref=e68]
+              - paragraph [ref=e69]: Try Claude
+            - generic [ref=e70]:
+              - generic [ref=e71]: $0
+              - generic [ref=e72]: Free for everyone
+            - button "Try Claude" [ref=e73] [cursor=pointer]
+            - list [ref=e75]:
+              - listitem [ref=e76]:
+                - generic [ref=e80]: Chat on web, iOS, Android, and on your desktop
+              - listitem [ref=e81]:
+                - generic [ref=e85]: Generate code and visualize data
+              - listitem [ref=e86]:
+                - generic [ref=e90]: Write, edit, and create content
+              - listitem [ref=e91]:
+                - generic [ref=e95]: Ability to search the web
+              - listitem [ref=e96]:
+                - generic [ref=e100]: Memory across conversations
+              - listitem [ref=e101]:
+                - generic [ref=e105]: Create files and execute code
+              - listitem [ref=e106]:
+                - generic [ref=e110]: Unlock more from Claude with desktop extensions
+              - listitem [ref=e111]:
+                - generic [ref=e115]: Connect Slack and Google Workspace services
+              - listitem [ref=e116]:
+                - generic [ref=e120]: Integrate any context or tool through connectors with remote MCP
+              - listitem [ref=e121]:
+                - generic [ref=e125]: Extended thinking for complex work
+          - generic [ref=e126]:
+            - generic [ref=e133]:
+              - heading "Pro" [level=3] [ref=e134]
+              - paragraph [ref=e135]: For everyday productivity
+            - generic [ref=e136]:
+              - generic [ref=e137]: $17
+              - generic [ref=e138]: Per month with annual subscription discount ($200 billed up front). $20 if billed monthly.
+            - button "Try Claude" [ref=e139] [cursor=pointer]
+            - paragraph [ref=e140]: No commitment · Cancel anytime
+            - generic [ref=e142]: "Everything in Free, plus:"
+            - list [ref=e143]:
+              - listitem [ref=e144]:
+                - generic [ref=e148]: More usage*
+              - listitem [ref=e149]:
+                - generic [ref=e153]: Includes Claude Code
+              - listitem [ref=e154]:
+                - generic [ref=e158]: Includes Claude Cowork
+              - listitem [ref=e159]:
+                - generic [ref=e163]: Includes Claude Design
+              - listitem [ref=e164]:
+                - generic [ref=e168]: Includes Claude Science
+              - listitem [ref=e169]:
+                - generic [ref=e173]: Access to unlimited projects to organize chats and documents
+              - listitem [ref=e174]:
+                - generic [ref=e178]: Access to Research
+              - listitem [ref=e179]:
+                - generic [ref=e183]: Ability to use more Claude models
+              - listitem [ref=e184]:
+                - generic [ref=e188]: Claude for Microsoft 365
+          - generic [ref=e189]:
+            - generic [ref=e198]:
+              - heading "Max" [level=3] [ref=e199]
+              - paragraph [ref=e200]: 5–20x more usage than Pro
+            - generic [ref=e201]:
+              - generic [ref=e202]: From $100
+              - generic [ref=e203]: Per month billed monthly
+            - button "Try Claude" [ref=e204] [cursor=pointer]
+            - paragraph [ref=e205]: No commitment · Cancel anytime
+            - generic [ref=e207]: "Everything in Pro, plus:"
+            - list [ref=e208]:
+              - listitem [ref=e209]:
+                - generic [ref=e213]: Choose 5x or 20x more usage than Pro*
+              - listitem [ref=e214]:
+                - generic [ref=e218]: Higher output limits for all tasks
+              - listitem [ref=e219]:
+                - generic [ref=e223]: Early access to advanced Claude features
+              - listitem [ref=e224]:
+                - generic [ref=e228]: Priority access at high traffic times
+        - generic [ref=e229]:
+          - text: "*"
+          - link "Usage limits apply." [ref=e230] [cursor=pointer]:
+            - /url: https://support.anthropic.com/en/articles/9797557-usage-limit-best-practices
+          - text: Prices shown don’t include applicable tax. Prices and plans are subject to change at Anthropic’s discretion.
+      - generic [ref=e231]:
+        - heading "Frequently asked questions" [level=2] [ref=e234]
+        - generic [ref=e236]:
+          - heading [level=3] [ref=e238]:
+            - button [ref=e239] [cursor=pointer]:
+              - heading "What is Claude and how does it work?" [level=3] [ref=e241]
+          - heading [level=3] [ref=e246]:
+            - button [ref=e247] [cursor=pointer]:
+              - heading "What should I use Claude for?" [level=3] [ref=e249]
+          - heading [level=3] [ref=e254]:
+            - button [ref=e255] [cursor=pointer]:
+              - heading "How much does it cost to use?" [level=3] [ref=e257]
+    - contentinfo [ref=e261]:
+      - generic [ref=e263]:
+        - generic [ref=e264]:
+          - img "Claude" [ref=e265]
+          - generic [ref=e269]:
+            - generic [ref=e270]: © 2026 ANTHROPIC PBC
+            - generic [ref=e284]:
+              - link "X (Twitter)" [ref=e285] [cursor=pointer]:
+                - /url: https://x.com/claudeai
+              - link "Threads" [ref=e288] [cursor=pointer]:
+                - /url: https://www.threads.com/@claudeai
+              - link "LinkedIn" [ref=e291] [cursor=pointer]:
+                - /url: https://www.linkedin.com/showcase/claude
+              - link "YouTube" [ref=e294] [cursor=pointer]:
+                - /url: https://www.youtube.com/@anthropic-ai
+              - link "Instagram" [ref=e297] [cursor=pointer]:
+                - /url: https://instagram.com/claudeai
+        - generic [ref=e302]:
+          - generic [ref=e303]:
+            - generic [ref=e304]:
+              - heading "Products" [level=3] [ref=e305]
+              - list [ref=e306]:
+                - listitem [ref=e307]:
+                  - link "Claude" [ref=e308] [cursor=pointer]:
+                    - /url: https://claude.com/product/overview
+                - listitem [ref=e309]:
+                  - link "Claude Code" [ref=e310] [cursor=pointer]:
+                    - /url: https://claude.com/product/claude-code
+                - listitem [ref=e311]:
+                  - link "Claude Code for Enterprise" [ref=e312] [cursor=pointer]:
+                    - /url: https://claude.com/product/claude-code/enterprise
+                - listitem [ref=e313]:
+                  - link "Claude Cowork" [ref=e314] [cursor=pointer]:
+                    - /url: https://claude.com/product/cowork
+                - listitem [ref=e315]:
+                  - link "Claude Security" [ref=e316] [cursor=pointer]:
+                    - /url: https://claude.com/product/claude-security
+                - listitem [ref=e317]:
+                  - link "Download app" [ref=e318] [cursor=pointer]:
+                    - /url: /download
+                - listitem [ref=e319]:
+                  - link "Pricing" [ref=e320] [cursor=pointer]:
+                    - /url: https://claude.com/pricing
+                - listitem [ref=e321]:
+                  - link "Log in" [ref=e322] [cursor=pointer]:
+                    - /url: /login
+            - generic [ref=e323]:
+              - heading "Features" [level=3] [ref=e324]
+              - list [ref=e325]:
+                - listitem [ref=e326]:
+                  - link "Claude for Chrome" [ref=e327] [cursor=pointer]:
+                    - /url: https://claude.com/claude-for-chrome
+                - listitem [ref=e328]:
+                  - link "Claude for Slack" [ref=e329] [cursor=pointer]:
+                    - /url: https://claude.com/claude-for-slack
+                - listitem [ref=e330]:
+                  - link "Claude for Microsoft 365" [ref=e331] [cursor=pointer]:
+                    - /url: https://claude.com/claude-for-microsoft-365
+                - listitem [ref=e332]:
+                  - link "Skills" [ref=e333] [cursor=pointer]:
+                    - /url: https://claude.com/skills
+            - generic [ref=e334]:
+              - heading "Models" [level=3] [ref=e335]
+              - list [ref=e336]:
+                - listitem [ref=e337]:
+                  - link "Mythos" [ref=e338] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/claude/mythos
+                - listitem [ref=e339]:
+                  - link "Fable" [ref=e340] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/claude/fable
+                - listitem [ref=e341]:
+                  - link "Opus" [ref=e342] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/claude/opus
+                - listitem [ref=e343]:
+                  - link "Sonnet" [ref=e344] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/claude/sonnet
+                - listitem [ref=e345]:
+                  - link "Haiku" [ref=e346] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/claude/haiku
+          - generic [ref=e347]:
+            - generic [ref=e348]:
+              - heading "Solutions" [level=3] [ref=e349]
+              - list [ref=e350]:
+                - listitem [ref=e351]:
+                  - link "AI agents" [ref=e352] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/agents
+                - listitem [ref=e353]:
+                  - link "Code modernization" [ref=e354] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/code-modernization
+                - listitem [ref=e355]:
+                  - link "Coding" [ref=e356] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/coding
+                - listitem [ref=e357]:
+                  - link "Customer support" [ref=e358] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/customer-support
+                - listitem [ref=e359]:
+                  - link "Cybersecurity" [ref=e360] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/cybersecurity
+                - listitem [ref=e361]:
+                  - link "Enterprise" [ref=e362] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/enterprise
+                - listitem [ref=e363]:
+                  - link "Financial services" [ref=e364] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/financial-services
+                - listitem [ref=e365]:
+                  - link "Government" [ref=e366] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/government
+                - listitem [ref=e367]:
+                  - link "Healthcare" [ref=e368] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/healthcare
+                - listitem [ref=e369]:
+                  - link "Higher education" [ref=e370] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/education
+                - listitem [ref=e371]:
+                  - link "K-12 teachers" [ref=e372] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/teachers
+                - listitem [ref=e373]:
+                  - link "Legal" [ref=e374] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/legal
+                - listitem [ref=e375]:
+                  - link "Life sciences" [ref=e376] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/life-sciences
+                - listitem [ref=e377]:
+                  - link "Nonprofits" [ref=e378] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/nonprofits
+                - listitem [ref=e379]:
+                  - link "Small business" [ref=e380] [cursor=pointer]:
+                    - /url: https://claude.com/solutions/small-business
+                - listitem [ref=e381]:
+                  - link "Startups" [ref=e382] [cursor=pointer]:
+                    - /url: https://claude.com/programs/startups
+            - generic [ref=e383]:
+              - heading "Claude Platform" [level=3] [ref=e384]
+              - list [ref=e385]:
+                - listitem [ref=e386]:
+                  - link "Overview" [ref=e387] [cursor=pointer]:
+                    - /url: https://claude.com/platform/api
+                - listitem [ref=e388]:
+                  - link "Developer docs" [ref=e389] [cursor=pointer]:
+                    - /url: https://platform.claude.com/docs
+                - listitem [ref=e390]:
+                  - link "Pricing" [ref=e391] [cursor=pointer]:
+                    - /url: https://claude.com/pricing#api
+                - listitem [ref=e392]:
+                  - link "Marketplace" [ref=e393] [cursor=pointer]:
+                    - /url: https://claude.com/platform/marketplace
+                - listitem [ref=e394]:
+                  - link "Claude on AWS" [ref=e395] [cursor=pointer]:
+                    - /url: https://claude.com/partners/amazon-bedrock
+                - listitem [ref=e396]:
+                  - link "Google Cloud’s Vertex AI" [ref=e397] [cursor=pointer]:
+                    - /url: https://claude.com/partners/google-cloud-vertex-ai
+                - listitem [ref=e398]:
+                  - link "Microsoft Foundry" [ref=e399] [cursor=pointer]:
+                    - /url: https://claude.com/partners/microsoft-foundry
+                - listitem [ref=e400]:
+                  - link "Regional compliance" [ref=e401] [cursor=pointer]:
+                    - /url: https://claude.com/regional-compliance
+                - listitem [ref=e402]:
+                  - link "Console login" [ref=e403] [cursor=pointer]:
+                    - /url: https://platform.claude.com/
+          - generic [ref=e404]:
+            - generic [ref=e405]:
+              - heading "Resources" [level=3] [ref=e406]
+              - list [ref=e407]:
+                - listitem [ref=e408]:
+                  - link "Blog" [ref=e409] [cursor=pointer]:
+                    - /url: https://claude.com/blog
+                - listitem [ref=e410]:
+                  - link "Claude partner network" [ref=e411] [cursor=pointer]:
+                    - /url: https://claude.com/partners
+                - listitem [ref=e412]:
+                  - link "Community" [ref=e413] [cursor=pointer]:
+                    - /url: https://claude.com/community
+                - listitem [ref=e414]:
+                  - link "Connectors" [ref=e415] [cursor=pointer]:
+                    - /url: https://claude.com/connectors
+                - listitem [ref=e416]:
+                  - link "Courses" [ref=e417] [cursor=pointer]:
+                    - /url: https://claude.com/resources/courses
+                - listitem [ref=e418]:
+                  - link "Customer stories" [ref=e419] [cursor=pointer]:
+                    - /url: https://claude.com/customers
+                - listitem [ref=e420]:
+                  - link "Engineering at Anthropic" [ref=e421] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/engineering
+                - listitem [ref=e422]:
+                  - link "Events" [ref=e423] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/events
+                - listitem [ref=e424]:
+                  - link "Plugins" [ref=e425] [cursor=pointer]:
+                    - /url: https://claude.com/plugins
+                - listitem [ref=e426]:
+                  - link "Powered by Claude" [ref=e427] [cursor=pointer]:
+                    - /url: https://claude.com/partners/powered-by-claude
+                - listitem [ref=e428]:
+                  - link "Service partners" [ref=e429] [cursor=pointer]:
+                    - /url: https://claude.com/partners/services
+                - listitem [ref=e430]:
+                  - link "Tutorials" [ref=e431] [cursor=pointer]:
+                    - /url: https://claude.com/resources/tutorials
+                - listitem [ref=e432]:
+                  - link "Use cases" [ref=e433] [cursor=pointer]:
+                    - /url: https://claude.com/resources/use-cases
+            - generic [ref=e434]:
+              - heading "Company" [level=3] [ref=e435]
+              - list [ref=e436]:
+                - listitem [ref=e437]:
+                  - link "Anthropic" [ref=e438] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/company
+                - listitem [ref=e439]:
+                  - link "Careers" [ref=e440] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/careers
+                - listitem [ref=e441]:
+                  - link "Economic Futures" [ref=e442] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/economic-futures
+                - listitem [ref=e443]:
+                  - link "Research" [ref=e444] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/research
+                - listitem [ref=e445]:
+                  - link "Anthropic news" [ref=e446] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/news
+                - listitem [ref=e447]:
+                  - link "Responsible Scaling Policy" [ref=e448] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy
+                - listitem [ref=e449]:
+                  - link "Security and compliance" [ref=e450] [cursor=pointer]:
+                    - /url: https://trust.anthropic.com
+                - listitem [ref=e451]:
+                  - link "Transparency" [ref=e452] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/transparency
+          - generic [ref=e453]:
+            - generic [ref=e454]:
+              - heading "Help and security" [level=3] [ref=e455]
+              - list [ref=e456]:
+                - listitem [ref=e457]:
+                  - link "Availability" [ref=e458] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/supported-countries
+                - listitem [ref=e459]:
+                  - link "Status" [ref=e460] [cursor=pointer]:
+                    - /url: https://status.anthropic.com
+                - listitem [ref=e461]:
+                  - link "Support center" [ref=e462] [cursor=pointer]:
+                    - /url: https://support.claude.com/en
+            - generic [ref=e463]:
+              - heading "Terms and policies" [level=3] [ref=e464]
+              - list [ref=e465]:
+                - listitem [ref=e466]:
+                  - button "Privacy choices" [ref=e467] [cursor=pointer]
+                - listitem [ref=e468]:
+                  - link "Privacy policy" [ref=e469] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/legal/privacy
+                - listitem [ref=e470]:
+                  - link "Responsible disclosure policy" [ref=e471] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/responsible-disclosure-policy
+                - listitem [ref=e472]:
+                  - 'link "Terms of service: Commercial" [ref=e473] [cursor=pointer]':
+                    - /url: https://www.anthropic.com/legal/commercial-terms
+                - listitem [ref=e474]:
+                  - 'link "Terms of service: Consumer" [ref=e475] [cursor=pointer]':
+                    - /url: https://www.anthropic.com/legal/consumer-terms
+                - listitem [ref=e476]:
+                  - 'link "Terms of service: US K-12" [ref=e477] [cursor=pointer]':
+                    - /url: https://www.anthropic.com/legal/k12-terms
+                - listitem [ref=e478]:
+                  - 'link "Data processing agreement: US K-12" [ref=e479] [cursor=pointer]':
+                    - /url: https://www.anthropic.com/legal/k12-dpa
+                - listitem [ref=e480]:
+                  - link "Usage policy" [ref=e481] [cursor=pointer]:
+                    - /url: https://www.anthropic.com/legal/aup
+  - region "Notifications (F8)":
+    - list

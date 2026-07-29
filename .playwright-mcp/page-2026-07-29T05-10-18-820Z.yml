@@ -1,0 +1,52 @@
+- generic [ref=f2e59]:
+  - generic [ref=f2e60]:
+    - generic "Về Dashboard" [ref=f2e62] [cursor=pointer]: zBD Agent
+    - generic [ref=f2e65]:
+      - generic [ref=f2e66] [cursor=pointer]: Dashboard
+      - generic [ref=f2e69] [cursor=pointer]: Khách hàng
+      - generic [ref=f2e72] [cursor=pointer]: Proposal
+      - generic [ref=f2e75] [cursor=pointer]: Product Knowledge
+      - generic [ref=f2e78] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f2e81] [cursor=pointer]: Template Library
+    - generic [ref=f2e84]:
+      - generic [ref=f2e85] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f2e89] [cursor=pointer]: Quản trị
+      - generic [ref=f2e92]:
+        - generic "Hồ sơ & cài đặt" [ref=f2e93] [cursor=pointer]:
+          - generic [ref=f2e94]: kh
+          - generic [ref=f2e96]: khanhpp
+        - generic "Đăng xuất" [ref=f2e98] [cursor=pointer]
+  - generic [ref=f2e103]:
+    - generic [ref=f2e104]:
+      - generic [ref=f2e105] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f2e106]: ⌘K
+      - generic [ref=f2e107]:
+        - generic [ref=f2e108]: "3"
+        - generic [ref=f2e112]: kh
+    - generic [ref=f2e229]:
+      - generic [ref=f2e230]:
+        - generic [ref=f2e231]: Khách hàng
+        - generic [ref=f2e232] [cursor=pointer]: Tạo khách hàng mới
+      - generic [ref=f2e234]:
+        - generic [ref=f2e235] [cursor=pointer]: Của tôi (0)
+        - generic [ref=f2e236] [cursor=pointer]: Được chia sẻ (7)
+        - generic [ref=f2e237]: Trạng thái
+        - generic [ref=f2e241]: Ngành
+        - textbox "Tìm tên hoặc website…" [ref=f2e245]
+      - generic [ref=f2e246]:
+        - generic [ref=f2e247]:
+          - generic [ref=f2e249]: Doanh nghiệp
+          - generic "Sắp xếp theo độ ưu tiên" [ref=f2e250] [cursor=pointer]:
+            - text: Ưu tiên
+            - generic [ref=f2e251]: ↓
+          - generic [ref=f2e252]: Ngành
+          - generic [ref=f2e253]: Trạng thái
+          - generic [ref=f2e254]: Phụ trách
+          - generic [ref=f2e255]: Cập nhật
+        - generic [ref=f2e256]:
+          - generic [ref=f2e257]: Chưa có khách hàng nào
+          - generic [ref=f2e258]: Tạo hồ sơ đầu tiên — chỉ cần tên doanh nghiệp và website, AI lo phần còn lại.
+          - generic [ref=f2e259]:
+            - generic [ref=f2e260] [cursor=pointer]: Xóa bộ lọc
+            - generic [ref=f2e261] [cursor=pointer]: Tạo khách hàng mới

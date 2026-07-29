@@ -1,0 +1,85 @@
+- generic [ref=f8e38]:
+  - generic [ref=f8e39]:
+    - generic "Về Dashboard" [ref=f8e41] [cursor=pointer]: zBD Agent
+    - generic [ref=f8e44]:
+      - generic [ref=f8e45] [cursor=pointer]: Dashboard
+      - generic [ref=f8e48] [cursor=pointer]: Khách hàng
+      - generic [ref=f8e51] [cursor=pointer]: Proposal
+      - generic [ref=f8e54] [cursor=pointer]: Product Knowledge
+      - generic [ref=f8e57] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f8e60] [cursor=pointer]: Template Library
+    - generic [ref=f8e63]:
+      - generic [ref=f8e64] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f8e68] [cursor=pointer]: Quản trị
+      - generic [ref=f8e71]:
+        - generic "Hồ sơ & cài đặt" [ref=f8e72] [cursor=pointer]:
+          - generic [ref=f8e73]: kh
+          - generic [ref=f8e75]: khanhpp
+        - generic "Đăng xuất" [ref=f8e77] [cursor=pointer]
+  - generic [ref=f8e82]:
+    - generic [ref=f8e83]:
+      - generic [ref=f8e84] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f8e85]: ⌘K
+      - generic [ref=f8e86]: kh
+    - generic [ref=f8e186]:
+      - generic [ref=f8e187]:
+        - text: Template Library /
+        - generic [ref=f8e188]: ZBS_Giải pháp cho Napas
+      - generic [ref=f8e189]:
+        - generic [ref=f8e190]: ZBS_Giải pháp cho Napas
+        - generic [ref=f8e193]:
+          - generic [ref=f8e194]:
+            - generic [ref=f8e195]: ZBS_Giải pháp cho Napas
+            - generic [ref=f8e196]: Mine
+            - generic [ref=f8e197]: Chưa dùng
+          - generic [ref=f8e198]: 21 slide · EN · dùng trong 0 proposal · v1.0 · Admin · cập nhật 9 phút trước
+        - generic [ref=f8e199]:
+          - generic [ref=f8e200] [cursor=pointer]: Xem trước
+          - generic [ref=f8e201] [cursor=pointer]: Xóa
+          - generic "Chia sẻ" [ref=f8e202] [cursor=pointer]
+          - generic [ref=f8e207] [cursor=pointer]: Lưu template
+      - generic [ref=f8e208]:
+        - generic [ref=f8e209]:
+          - generic [ref=f8e210]:
+            - generic [ref=f8e211]: Thông tin
+            - generic [ref=f8e212]:
+              - generic [ref=f8e213]:
+                - generic [ref=f8e214]: Tên template
+                - textbox [ref=f8e215]: ZBS_Giải pháp cho Napas
+              - generic [ref=f8e216]:
+                - generic [ref=f8e217]: Ngành phù hợp
+                - textbox [ref=f8e218]: Retail · F&B
+            - generic [ref=f8e219]:
+              - generic [ref=f8e220]: Mô tả
+              - textbox [ref=f8e221]: Proposal ngắn gọn cho cấp quản lý ngành bán lẻ — tập trung giá trị kinh doanh, tối đa 12 slide.
+          - generic [ref=f8e222]:
+            - generic [ref=f8e223]: Brand & giao diện
+            - generic [ref=f8e224]:
+              - generic [ref=f8e225]:
+                - generic [ref=f8e226]: Bảng màu
+                - generic [ref=f8e227]: +
+                - generic [ref=f8e237]: Theo brand guideline Zalo — thành phần bị khóa bởi Admin
+              - generic [ref=f8e238]:
+                - generic [ref=f8e239]: Logo
+                - generic [ref=f8e240]: Đổi logo
+            - generic [ref=f8e244]:
+              - generic [ref=f8e245]:
+                - generic [ref=f8e246]: Font
+                - generic [ref=f8e247] [cursor=pointer]: Roboto
+              - generic [ref=f8e250]:
+                - generic [ref=f8e251]: Tỷ lệ slide
+                - generic [ref=f8e252] [cursor=pointer]: 16:9
+              - generic [ref=f8e255]:
+                - generic [ref=f8e256]: Ngôn ngữ
+                - generic [ref=f8e257] [cursor=pointer]: VI / EN
+        - generic [ref=f8e261]:
+          - generic [ref=f8e262]: Xem trước layout
+          - generic [ref=f8e263]: ZBS_Giải pháp cho Napas
+        - generic [ref=f8e272]:
+          - generic [ref=f8e273]:
+            - generic [ref=f8e274]: Phiên bản
+            - generic [ref=f8e275] [cursor=pointer]: So sánh
+          - generic [ref=f8e278]:
+            - generic [ref=f8e279]: — hiện tại
+            - generic [ref=f8e280]: 9 phút trước · Admin

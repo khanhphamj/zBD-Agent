@@ -1,0 +1,108 @@
+- generic [ref=f6e38]:
+  - generic [ref=f6e39]:
+    - generic "Về Dashboard" [ref=f6e41] [cursor=pointer]: zBD Agent
+    - generic [ref=f6e44]:
+      - generic [ref=f6e45] [cursor=pointer]: Dashboard
+      - generic [ref=f6e48] [cursor=pointer]: Khách hàng
+      - generic [ref=f6e51] [cursor=pointer]: Proposal
+      - generic [ref=f6e54] [cursor=pointer]: Product Knowledge
+      - generic [ref=f6e57] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f6e60] [cursor=pointer]: Template Library
+    - generic [ref=f6e63]:
+      - generic [ref=f6e64] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f6e68] [cursor=pointer]: Quản trị
+      - generic [ref=f6e71]:
+        - generic "Hồ sơ & cài đặt" [ref=f6e72] [cursor=pointer]:
+          - generic [ref=f6e73]: za
+          - generic [ref=f6e75]: zaloadmin
+        - generic "Đăng xuất" [ref=f6e77] [cursor=pointer]
+  - generic [ref=f6e82]:
+    - generic [ref=f6e83]:
+      - generic [ref=f6e84] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f6e85]: ⌘K
+      - generic [ref=f6e86]:
+        - generic [ref=f6e87]: "3"
+        - generic [ref=f6e91]: za
+    - generic [ref=f6e94]:
+      - generic [ref=f6e95]:
+        - generic [ref=f6e96]: Chào zaloadmin 👋
+        - generic [ref=f6e97]:
+          - generic [ref=f6e98] [cursor=pointer]: Chạy Deep Research
+          - generic [ref=f6e99] [cursor=pointer]: Tạo khách hàng mới
+      - generic [ref=f6e101]:
+        - generic [ref=f6e102] [cursor=pointer]:
+          - generic [ref=f6e104]: "7"
+          - generic [ref=f6e105]: Khách hàng phụ trách
+        - generic [ref=f6e106] [cursor=pointer]:
+          - generic [ref=f6e108]: "1"
+          - generic [ref=f6e109]: Đang Deep Research
+        - generic [ref=f6e110] [cursor=pointer]:
+          - generic [ref=f6e112]: "6"
+          - generic [ref=f6e113]: Hoàn tất nghiên cứu
+        - generic [ref=f6e114] [cursor=pointer]:
+          - generic [ref=f6e116]: "1"
+          - generic [ref=f6e117]: Proposal đang soạn
+        - generic [ref=f6e118] [cursor=pointer]:
+          - generic [ref=f6e120]: "2"
+          - generic [ref=f6e121]: Khách đang trao đổi
+        - generic [ref=f6e122] [cursor=pointer]:
+          - generic [ref=f6e124]: "0"
+          - generic [ref=f6e125]: Proposal hoàn tất
+      - generic [ref=f6e126]:
+        - generic [ref=f6e127]:
+          - generic [ref=f6e128]:
+            - generic [ref=f6e129]: Khách hàng cập nhật gần đây
+            - generic [ref=f6e130] [cursor=pointer]: Xem tất cả
+          - generic [ref=f6e131]:
+            - generic [ref=f6e132]: Doanh nghiệp
+            - generic "Sắp xếp theo độ ưu tiên" [ref=f6e133] [cursor=pointer]:
+              - text: Ưu tiên
+              - generic [ref=f6e134]: ↓
+            - generic [ref=f6e135]: Ngành
+            - generic [ref=f6e136]: Trạng thái
+            - generic [ref=f6e137]: Cập nhật
+          - generic [ref=f6e138] [cursor=pointer]:
+            - generic [ref=f6e142]:
+              - generic [ref=f6e143]: TCH
+              - generic [ref=f6e144]: thecoffeehouse.com
+            - generic [ref=f6e145]: "0"
+            - generic [ref=f6e147]: F&B
+            - generic [ref=f6e148]: Hoàn tất nghiên cứu
+            - generic [ref=f6e150]: 1 giờ trước
+          - generic [ref=f6e151] [cursor=pointer]:
+            - generic [ref=f6e155]:
+              - generic [ref=f6e156]: BHX
+              - generic [ref=f6e157]: bachhoaxanh.com
+            - generic [ref=f6e158]: "0"
+            - generic [ref=f6e160]: Bán lẻ
+            - generic [ref=f6e161]: Đang xây dựng proposal
+            - generic [ref=f6e163]: 1 giờ trước
+          - generic [ref=f6e164] [cursor=pointer]:
+            - generic [ref=f6e168]:
+              - generic [ref=f6e169]: LC
+              - generic [ref=f6e170]: nhathuoclongchau.com.vn
+            - generic [ref=f6e171]: "0"
+            - generic [ref=f6e173]: Dược phẩm
+            - generic [ref=f6e174]: Hoàn tất nghiên cứu
+            - generic [ref=f6e176]: 1 giờ trước
+        - generic [ref=f6e177]:
+          - generic [ref=f6e178]:
+            - generic [ref=f6e179]: Proposal gần đây
+            - generic [ref=f6e180] [cursor=pointer]:
+              - generic [ref=f6e183]:
+                - generic [ref=f6e184]: TCH – Loyalty trên Mini App
+                - generic [ref=f6e185]: v1.4 · sửa 1 giờ trước
+              - generic [ref=f6e186]: Draft
+          - generic [ref=f6e187]:
+            - generic [ref=f6e188]: Sản phẩm được đề xuất nhiều
+            - generic [ref=f6e189]:
+              - generic [ref=f6e191] [cursor=pointer]:
+                - generic [ref=f6e192]: ZBS Template Message
+                - generic [ref=f6e193]: 68%
+              - generic [ref=f6e197] [cursor=pointer]:
+                - generic [ref=f6e198]: Menu & Chatbot
+                - generic [ref=f6e199]: 54%
+              - generic [ref=f6e203] [cursor=pointer]:
+                - generic [ref=f6e204]: Zalo Mini App
+                - generic [ref=f6e205]: 41%

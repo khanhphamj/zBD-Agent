@@ -1,0 +1,77 @@
+- generic [ref=f19e38]:
+  - generic [ref=f19e39]:
+    - generic "Về Dashboard" [ref=f19e41] [cursor=pointer]: zBD Agent
+    - generic [ref=f19e44]:
+      - generic [ref=f19e45] [cursor=pointer]: Dashboard
+      - generic [ref=f19e48] [cursor=pointer]: Khách hàng
+      - generic [ref=f19e51] [cursor=pointer]: Proposal
+      - generic [ref=f19e54] [cursor=pointer]: Product Knowledge
+      - generic [ref=f19e57] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f19e60] [cursor=pointer]: Template Library
+    - generic [ref=f19e63]:
+      - generic [ref=f19e64] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f19e68] [cursor=pointer]: Quản trị
+      - generic [ref=f19e71]:
+        - generic "Hồ sơ & cài đặt" [ref=f19e72] [cursor=pointer]:
+          - generic [ref=f19e73]: kh
+          - generic [ref=f19e75]: khanhpp
+        - generic "Đăng xuất" [ref=f19e77] [cursor=pointer]
+  - generic [ref=f19e82]:
+    - generic [ref=f19e83]:
+      - generic [ref=f19e84] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f19e85]: ⌘K
+      - generic [ref=f19e86]:
+        - generic [ref=f19e87]: "3"
+        - generic [ref=f19e91]: kh
+    - generic [ref=f19e94]:
+      - generic [ref=f19e95]:
+        - generic [ref=f19e96]:
+          - generic [ref=f19e97]: Playbook & Skill
+          - generic [ref=f19e98]: Kho tri thức và cách AI làm việc — dùng chung toàn đội hoặc riêng bạn, chia sẻ được cho đồng nghiệp
+        - generic [ref=f19e99] [cursor=pointer]: + Tạo skill
+      - generic [ref=f19e100]:
+        - generic [ref=f19e101] [cursor=pointer]: Knowledge Base
+        - generic [ref=f19e103] [cursor=pointer]: Skills
+      - generic [ref=f19e104]:
+        - generic [ref=f19e105] [cursor=pointer]: Tất cả
+        - generic [ref=f19e106] [cursor=pointer]: Shared
+        - generic [ref=f19e107] [cursor=pointer]: Mine
+        - textbox "Tìm trong thư viện…" [ref=f19e108]
+      - generic [ref=f19e116]:
+        - generic [ref=f19e117] [cursor=pointer]:
+          - generic [ref=f19e118]:
+            - generic [ref=f19e120]: Khớp sản phẩm Zalo
+            - generic [ref=f19e121]: Mine
+          - generic [ref=f19e122]: Đối chiếu điểm đau của khách với danh mục sản phẩm Zalo
+          - generic [ref=f19e123]:
+            - generic [ref=f19e124]: Phương án
+            - generic [ref=f19e125]: v1.0 · Admin · Dùng 0 lần
+          - generic [ref=f19e126]:
+            - generic [ref=f19e127]: Kiểm thử
+            - generic "Chia sẻ" [ref=f19e130]
+            - generic "Tùy chọn" [ref=f19e136]
+        - generic [ref=f19e137] [cursor=pointer]:
+          - generic [ref=f19e138]:
+            - generic [ref=f19e140]: Khớp sản phẩm Zalo (2)
+            - generic [ref=f19e141]: Mine
+          - generic [ref=f19e142]: Đối chiếu điểm đau của khách với danh mục sản phẩm Zalo
+          - generic [ref=f19e143]:
+            - generic [ref=f19e144]: Phương án
+            - generic [ref=f19e145]: v1.0 · Admin · Dùng 0 lần
+          - generic [ref=f19e146]:
+            - generic [ref=f19e147]: Kiểm thử
+            - generic "Chia sẻ" [ref=f19e150]
+            - generic "Tùy chọn" [ref=f19e156]
+        - generic [ref=f19e157] [cursor=pointer]:
+          - generic [ref=f19e158]:
+            - generic [ref=f19e160]: Deep Research doanh nghiệp Việt Nam
+            - generic [ref=f19e161]: Shared
+          - generic [ref=f19e162]: Dựng hồ sơ doanh nghiệp từ nguồn công khai, chỉ phạm vi thị trường Việt Nam.
+          - generic [ref=f19e163]:
+            - generic [ref=f19e164]: Research
+            - generic [ref=f19e165]: v1.0 · Admin · Dùng 0 lần
+          - generic [ref=f19e166]:
+            - generic [ref=f19e167]: Kiểm thử
+            - generic "Chia sẻ" [ref=f19e170]
+            - generic "Tùy chọn" [ref=f19e176]

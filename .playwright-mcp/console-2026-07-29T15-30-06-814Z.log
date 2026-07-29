@@ -1,0 +1,10 @@
+[      88ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:1203
+[     392ms] [ERROR] Failed to load resource: the server responded with a status of 401 (Unauthorized) @ http://localhost:8000/api/v1/admin/audit?size=20&from=2026-07-28T15%3A30%3A07.179Z:0
+[   11945ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 2 khách hàng, 0 proposal, 1 KB, 0 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm, 3 thông báo, 0 sản phẩm được đề xuất nhiều @ http://localhost:8000/zb-api-bridge.js:553
+[   33824ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://icons.duckduckgo.com/ip3/.ico:0
+[  195639ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://icons.duckduckgo.com/ip3/.ico:0
+[  197369ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 2 khách hàng, 0 proposal, 1 KB, 0 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm, 4 thông báo, 0 sản phẩm được đề xuất nhiều @ http://localhost:8000/zb-api-bridge.js:553
+[  385441ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://icons.duckduckgo.com/ip3/ch%C6%B0a%20c%C3%B3%20li%C3%AAn%20k%E1%BA%BFt.ico:0
+[  509915ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/api/v1/jobs/job_42454aa356:0
+[  511917ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:8000/api/v1/jobs/job_42454aa356:0
+[  694196ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 2 khách hàng, 0 proposal, 1 KB, 0 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm, 5 thông báo, 0 sản phẩm được đề xuất nhiều @ http://localhost:8000/zb-api-bridge.js:553

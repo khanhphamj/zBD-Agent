@@ -1,0 +1,146 @@
+- generic [ref=f20e38]:
+  - generic [ref=f20e39]:
+    - generic "Về Dashboard" [ref=f20e41] [cursor=pointer]: zBD Agent
+    - generic [ref=f20e44]:
+      - generic [ref=f20e45] [cursor=pointer]: Dashboard
+      - generic [ref=f20e48] [cursor=pointer]: Khách hàng
+      - generic [ref=f20e51] [cursor=pointer]: Proposal
+      - generic [ref=f20e54] [cursor=pointer]: Product Knowledge
+      - generic [ref=f20e57] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f20e60] [cursor=pointer]: Template Library
+    - generic [ref=f20e63]:
+      - generic [ref=f20e64] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f20e68] [cursor=pointer]: Quản trị
+      - generic [ref=f20e71]:
+        - generic "Hồ sơ & cài đặt" [ref=f20e72] [cursor=pointer]:
+          - generic [ref=f20e73]: kh
+          - generic [ref=f20e75]: khanhpp
+        - generic "Đăng xuất" [ref=f20e77] [cursor=pointer]
+  - generic [ref=f20e82]:
+    - generic [ref=f20e83]:
+      - generic [ref=f20e84] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f20e85]: ⌘K
+      - generic [ref=f20e86]:
+        - generic [ref=f20e87]: "3"
+        - generic [ref=f20e91]: kh
+    - generic [ref=f20e198]:
+      - generic [ref=f20e199]:
+        - text: Playbook & Skill /
+        - generic [ref=f20e200]: Skill mới
+      - generic [ref=f20e201]:
+        - generic [ref=f20e204]:
+          - generic [ref=f20e205]:
+            - generic [ref=f20e206]: Skill mới
+            - generic [ref=f20e207]: Mine
+            - generic [ref=f20e208]: Active
+          - generic [ref=f20e209]: v1.0 · cập nhật 20/07/2026 · khanhpp
+        - generic [ref=f20e210]:
+          - generic [ref=f20e211] [cursor=pointer]: Kiểm thử
+          - generic [ref=f20e214] [cursor=pointer]: Xóa
+          - generic "Chia sẻ" [ref=f20e215] [cursor=pointer]
+          - generic [ref=f20e220] [cursor=pointer]: Lưu skill
+      - generic [ref=f20e221]:
+        - generic [ref=f20e222]:
+          - generic [ref=f20e223]:
+            - generic [ref=f20e224]: Thông tin
+            - generic [ref=f20e225]:
+              - generic [ref=f20e226]:
+                - generic [ref=f20e227]: Tên skill
+                - textbox [ref=f20e228]: Skill mới
+              - generic [ref=f20e229]:
+                - generic [ref=f20e230]: Mục tiêu
+                - textbox [ref=f20e231]: Nghiên cứu khách hàng có nguồn rõ ràng
+            - generic [ref=f20e232]:
+              - generic [ref=f20e233]: Mô tả
+              - textbox [ref=f20e234]: Mô tả ngắn về nhiệm vụ của skill
+          - generic [ref=f20e235]:
+            - generic [ref=f20e236]:
+              - generic [ref=f20e237]: Hướng dẫn dành cho AI
+              - generic [ref=f20e238] [cursor=pointer]: AI gợi ý cải thiện
+            - textbox [ref=f20e240]: "Bạn là chuyên gia Business Development của Zalo. Nghiên cứu doanh nghiệp từ website và các nguồn công khai: xác định mô hình kinh doanh, đối tượng khách hàng, hiện trạng kênh số, nhu cầu và cơ hội ứng dụng sản phẩm Zalo. Quy tắc: - Mỗi dữ kiện phải kèm nguồn (URL + thời điểm thu thập). - Phân biệt rõ dữ kiện đã xác minh và suy luận của AI. - Không ghi đè dữ liệu người dùng đã xác nhận; tạo đề xuất cập nhật. - Đối chiếu nhu cầu với {product_knowledge}, chỉ dùng nội dung đã publish."
+            - generic [ref=f20e241]:
+              - generic [ref=f20e242]: "Biến khả dụng:"
+              - generic [ref=f20e243]: "{customer_profile}"
+              - generic [ref=f20e244]: "{product_knowledge}"
+              - generic [ref=f20e245]: "{industry}"
+              - generic [ref=f20e246]: "{sources}"
+          - generic [ref=f20e248]:
+            - generic [ref=f20e249]:
+              - generic [ref=f20e250]: Dữ liệu đầu vào
+              - generic [ref=f20e251]:
+                - generic [ref=f20e252]: Hồ sơ khách hàng
+                - generic [ref=f20e257]: Website
+                - generic [ref=f20e262]: LinkedIn
+                - generic [ref=f20e267]: Tài liệu tải lên
+                - generic [ref=f20e272] [cursor=pointer]: + Thêm
+            - generic [ref=f20e273]:
+              - generic [ref=f20e274]: Cấu trúc đầu ra
+              - generic [ref=f20e275]:
+                - generic [ref=f20e276]:
+                  - generic [ref=f20e277]: "01"
+                  - text: Executive Summary
+                - generic [ref=f20e278]:
+                  - generic [ref=f20e279]: "02"
+                  - text: Mô hình kinh doanh & kênh số
+                - generic [ref=f20e280]:
+                  - generic [ref=f20e281]: "03"
+                  - text: Nhu cầu & cơ hội Zalo
+                - generic [ref=f20e282]:
+                  - generic [ref=f20e283]: "04"
+                  - text: Danh sách nguồn + độ tin cậy
+        - generic [ref=f20e284]:
+          - generic [ref=f20e285]:
+            - generic [ref=f20e286]: Cấu hình
+            - generic [ref=f20e287]:
+              - generic [ref=f20e288]: Ngôn ngữ
+              - generic [ref=f20e289] [cursor=pointer]: Tiếng Việt
+            - generic [ref=f20e292]:
+              - generic [ref=f20e293]: Model
+              - generic [ref=f20e294] [cursor=pointer]: Mặc định hệ thống
+            - generic [ref=f20e297]:
+              - generic [ref=f20e298]:
+                - generic [ref=f20e299]: Mức sáng tạo
+                - generic [ref=f20e300]: Thấp
+              - generic [ref=f20e304]:
+                - generic [ref=f20e305] [cursor=pointer]: Thấp
+                - generic [ref=f20e306] [cursor=pointer]: Vừa
+                - generic [ref=f20e307] [cursor=pointer]: Cao
+          - generic [ref=f20e308]:
+            - generic [ref=f20e309]: Công cụ & nguồn dữ liệu
+            - generic [ref=f20e310]:
+              - generic [ref=f20e311] [cursor=pointer]:
+                - generic [ref=f20e312]: ✓
+                - generic [ref=f20e314]:
+                  - generic [ref=f20e315]: Web Search
+                  - generic [ref=f20e316]: Tìm kiếm nguồn công khai
+              - generic [ref=f20e317] [cursor=pointer]:
+                - generic [ref=f20e318]: ✓
+                - generic [ref=f20e320]:
+                  - generic [ref=f20e321]: Crawler
+                  - generic [ref=f20e322]: Crawl website doanh nghiệp
+              - generic [ref=f20e323] [cursor=pointer]:
+                - generic [ref=f20e324]: ✓
+                - generic [ref=f20e326]:
+                  - generic [ref=f20e327]: Product Knowledge Hub
+                  - generic [ref=f20e328]: Do Admin cập nhật & publish
+              - generic [ref=f20e331] [cursor=pointer]:
+                - generic [ref=f20e332]: Template Library
+                - generic [ref=f20e333]: Gắn template đầu ra
+          - generic [ref=f20e334]:
+            - generic [ref=f20e335]:
+              - generic [ref=f20e336]: Phiên bản
+              - generic [ref=f20e337] [cursor=pointer]: So sánh
+            - generic [ref=f20e340]:
+              - generic [ref=f20e341]: v1.0 — hiện tại
+              - generic [ref=f20e342]: 20/07/2026 · khanhpp
+            - generic [ref=f20e343]:
+              - generic [ref=f20e345]:
+                - generic [ref=f20e346]: v2.3
+                - generic [ref=f20e347]: 02/07/2026 · thêm nguồn báo chí
+              - generic [ref=f20e348] [cursor=pointer]: Khôi phục
+            - generic [ref=f20e349]:
+              - generic [ref=f20e351]:
+                - generic [ref=f20e352]: v2.1
+                - generic [ref=f20e353]: 15/06/2026
+              - generic [ref=f20e354] [cursor=pointer]: Khôi phục

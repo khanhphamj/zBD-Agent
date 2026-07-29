@@ -1,0 +1,19 @@
+- generic [ref=f29e4]:
+  - generic [ref=f29e5]:
+    - generic [ref=f29e7]:
+      - generic [ref=f29e8]:
+        - generic [ref=f29e10]: zBD Agent
+        - generic [ref=f29e11]: Customer Research, Product Matching & Proposal Assistant
+      - generic [ref=f29e12]:
+        - generic [ref=f29e13]: Deep Research
+        - generic [ref=f29e16]: Product Matching
+        - generic [ref=f29e19]: Slide Builder
+    - generic [ref=f29e22]: © 2026 Zalo Business Solutions · Internal
+  - generic [ref=f29e24]:
+    - generic [ref=f29e25]: Đăng nhập
+    - generic [ref=f29e26]: Đăng nhập không cần mật khẩu — nhận mã OTP qua email công ty.
+    - generic [ref=f29e27]:
+      - generic [ref=f29e28]: Email công ty
+      - textbox "yourdomain@vng.com.vn" [active] [ref=f29e29]: khanhpp@vng.com.vn
+    - generic [ref=f29e30] [cursor=pointer]: Nhận mã OTP
+    - generic [ref=f29e35]: Mã OTP 6 số gửi qua email, hiệu lực 5 phút, chỉ dùng một lần.

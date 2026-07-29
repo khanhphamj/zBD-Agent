@@ -1,0 +1,106 @@
+- generic [ref=f4e59]:
+  - generic [ref=f4e60]:
+    - generic "Về Dashboard" [ref=f4e62] [cursor=pointer]: zBD Agent
+    - generic [ref=f4e65]:
+      - generic [ref=f4e66] [cursor=pointer]: Dashboard
+      - generic [ref=f4e69] [cursor=pointer]: Khách hàng
+      - generic [ref=f4e72] [cursor=pointer]: Proposal
+      - generic [ref=f4e75] [cursor=pointer]: Product Knowledge
+      - generic [ref=f4e78] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f4e81] [cursor=pointer]: Template Library
+    - generic [ref=f4e84]:
+      - generic [ref=f4e85] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f4e89] [cursor=pointer]: Quản trị
+      - generic [ref=f4e92]:
+        - generic "Hồ sơ & cài đặt" [ref=f4e93] [cursor=pointer]:
+          - generic [ref=f4e94]: kh
+          - generic [ref=f4e96]: khanhpp
+        - generic "Đăng xuất" [ref=f4e98] [cursor=pointer]
+  - generic [ref=f4e103]:
+    - generic [ref=f4e104]:
+      - generic [ref=f4e105] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f4e106]: ⌘K
+      - generic [ref=f4e107]:
+        - generic [ref=f4e108]: "3"
+        - generic [ref=f4e112]: kh
+    - generic [ref=f4e229]:
+      - generic [ref=f4e230]:
+        - generic [ref=f4e231]:
+          - generic [ref=f4e232]: Playbook & Skill
+          - generic [ref=f4e233]: Kho tri thức và cách AI làm việc — dùng chung toàn đội hoặc riêng bạn, chia sẻ được cho đồng nghiệp
+        - generic [ref=f4e234] [cursor=pointer]: + Thêm Knowledge Base
+      - generic [ref=f4e235]:
+        - generic [ref=f4e236] [cursor=pointer]: Knowledge Base
+        - generic [ref=f4e238] [cursor=pointer]: Skills
+      - generic [ref=f4e239]:
+        - generic [ref=f4e240] [cursor=pointer]: Tất cả
+        - generic [ref=f4e241] [cursor=pointer]: Shared
+        - generic [ref=f4e242] [cursor=pointer]: Mine
+        - textbox "Tìm trong thư viện…" [ref=f4e243]
+      - generic [ref=f4e244]:
+        - generic [ref=f4e245] [cursor=pointer]:
+          - generic [ref=f4e246]:
+            - generic [ref=f4e248]: Quy định ngành ngân hàng
+            - generic [ref=f4e249]: Shared
+          - generic [ref=f4e250]: Cap nhat mo ta
+          - generic [ref=f4e251]:
+            - generic [ref=f4e252]: Tuân thủ
+            - generic [ref=f4e253]: Ngân hàng
+            - generic [ref=f4e254]: Chưa dùng
+          - generic [ref=f4e255]:
+            - generic [ref=f4e256]: 3 tài liệu · khanhpp
+            - generic "Chia sẻ" [ref=f4e257]
+            - generic "Tùy chọn" [ref=f4e263]
+        - generic [ref=f4e264] [cursor=pointer]:
+          - generic [ref=f4e265]:
+            - generic [ref=f4e267]: Bảng giá nội bộ 2026
+            - generic [ref=f4e268]: Mine
+          - generic [ref=f4e269]: Bảng giá và biên độ chiết khấu — chỉ dành cho đội BD được cấp quyền.
+          - generic [ref=f4e270]:
+            - generic [ref=f4e271]: Giá
+            - generic [ref=f4e272]: Nội bộ
+            - generic [ref=f4e273]: Chưa dùng
+          - generic [ref=f4e274]:
+            - generic [ref=f4e275]: 12 tài liệu · khanhpp
+            - generic "Chia sẻ" [ref=f4e276]
+            - generic "Tùy chọn" [ref=f4e282]
+        - generic [ref=f4e283] [cursor=pointer]:
+          - generic [ref=f4e284]:
+            - generic [ref=f4e286]: Case study khách hàng Việt Nam
+            - generic [ref=f4e287]: Shared
+          - generic [ref=f4e288]: Các case đã triển khai tại thị trường Việt Nam, phân theo ngành.
+          - generic [ref=f4e289]:
+            - generic [ref=f4e290]: Case study
+            - generic [ref=f4e291]: Bán hàng
+            - generic [ref=f4e292]: Chưa dùng
+          - generic [ref=f4e293]:
+            - generic [ref=f4e294]: 34 tài liệu · khanhpp
+            - generic "Chia sẻ" [ref=f4e295]
+            - generic "Tùy chọn" [ref=f4e301]
+        - generic [ref=f4e302] [cursor=pointer]:
+          - generic [ref=f4e303]:
+            - generic [ref=f4e305]: Zalo Product Playbook
+            - generic [ref=f4e306]: Shared
+          - generic [ref=f4e307]: Tài liệu sản phẩm, bảng giá và FAQ chính thức của Zalo Business Service.
+          - generic [ref=f4e308]:
+            - generic [ref=f4e309]: Sản phẩm
+            - generic [ref=f4e310]: FAQ
+            - generic [ref=f4e311]: Chưa dùng
+          - generic [ref=f4e312]:
+            - generic [ref=f4e313]: 86 tài liệu · khanhpp
+            - generic "Chia sẻ" [ref=f4e314]
+            - generic "Tùy chọn" [ref=f4e320]
+        - generic [ref=f4e321] [cursor=pointer]:
+          - generic [ref=f4e322]:
+            - generic [ref=f4e324]: Pipeline & giá deal BFSI
+            - generic [ref=f4e325]: Riêng tư
+          - generic [ref=f4e326]: Ghi chú giá, điều khoản và pipeline riêng của quocbao — bạn chưa có quyền xem nội dung.
+          - generic [ref=f4e327]:
+            - generic [ref=f4e328]: BFSI
+            - generic [ref=f4e329]: Nội bộ
+            - generic [ref=f4e330]: Không có quyền xem
+          - generic [ref=f4e331]:
+            - generic [ref=f4e332]: 14 tài liệu · quocbao
+            - generic [ref=f4e333]: Xin quyền truy cập
+            - generic "Tùy chọn" [ref=f4e335]

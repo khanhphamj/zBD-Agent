@@ -1,0 +1,6 @@
+[      79ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://127.0.0.1:8000/zb-api-bridge.js:308
+[     383ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 7 khách hàng, 1 proposal, 4 KB, 5 skill, 3 template, 6 sản phẩm @ http://127.0.0.1:8000/zb-api-bridge.js:243
+[     388ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/favicon.ico:0
+[   71563ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 7 khách hàng, 1 proposal, 4 KB, 5 skill, 3 template, 6 sản phẩm @ http://127.0.0.1:8000/zb-api-bridge.js:243
+[   71582ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:8000/undefined:0
+[   73190ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://icons.duckduckgo.com/ip3/bachhoaxanh.com.ico:0

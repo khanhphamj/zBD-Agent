@@ -1,0 +1,88 @@
+- generic [ref=f27e38]:
+  - generic [ref=f27e39]:
+    - generic "Về Dashboard" [ref=f27e41] [cursor=pointer]: zBD Agent
+    - generic [ref=f27e44]:
+      - generic [ref=f27e45] [cursor=pointer]: Dashboard
+      - generic [ref=f27e48] [cursor=pointer]: Khách hàng
+      - generic [ref=f27e51] [cursor=pointer]: Proposal
+      - generic [ref=f27e54] [cursor=pointer]: Product Knowledge
+      - generic [ref=f27e57] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f27e60] [cursor=pointer]: Template Library
+    - generic [ref=f27e63]:
+      - generic [ref=f27e64] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f27e68] [cursor=pointer]: Quản trị
+      - generic [ref=f27e71]:
+        - generic "Hồ sơ & cài đặt" [ref=f27e72] [cursor=pointer]:
+          - generic [ref=f27e73]: kh
+          - generic [ref=f27e75]: khanhpp
+        - generic "Đăng xuất" [ref=f27e77] [cursor=pointer]
+  - generic [ref=f27e82]:
+    - generic [ref=f27e83]:
+      - generic [ref=f27e84] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f27e85]: ⌘K
+      - generic [ref=f27e86]: kh
+    - generic [ref=f27e93]:
+      - generic [ref=f27e94]:
+        - generic [ref=f27e95]:
+          - generic [ref=f27e96]: Playbook & Skill
+          - generic [ref=f27e97]: Kho tri thức và cách AI làm việc — dùng chung toàn đội hoặc riêng bạn, chia sẻ được cho đồng nghiệp
+        - generic [ref=f27e98] [cursor=pointer]: + Tạo skill
+        - generic [ref=f27e127] [cursor=pointer]: Nhập .skill
+      - generic [ref=f27e99]:
+        - generic [ref=f27e100] [cursor=pointer]: Knowledge Base
+        - generic [ref=f27e102] [cursor=pointer]: Skills
+      - generic [ref=f27e103]:
+        - generic [ref=f27e104] [cursor=pointer]: Tất cả
+        - generic [ref=f27e105] [cursor=pointer]: Shared
+        - generic [ref=f27e106] [cursor=pointer]: Mine
+        - textbox "Tìm trong thư viện…" [ref=f27e107]
+      - generic [ref=f27e129]:
+        - generic [ref=f27e130] [cursor=pointer]:
+          - generic [ref=f27e131]:
+            - generic [ref=f27e133]: zbd-decision-support
+            - generic [ref=f27e134]: Mine
+          - generic [ref=f27e135]: "zBD Agent — Decision Support Agent (Core). Layer AI đồng hành xuyên suốt toàn bộ sales journey — từ trước pitch đến sau pitch đến khi deal stall. Không chỉ tạo tài liệu — AI phân tích trạng thái deal và đề xuất \"bước tiếp theo nên làm gì, và vì sao\". Đây là điểm khác biệt cốt lõi của zBD Agent. Trigger khi BD nói: - \"nên làm gì tiếp theo với [KH]?\" - \"deal [KH] đang stuck\" - \"[KH] vừa gặp xong, họ nói...\" - \"paste meeting notes / email KH\" - Deal không update > 14 ngày (tự động phát hiện từ HubSpot nếu có) - \"phân tích deal [KH]\" - \"chuẩn bị gặp [KH] ngày mai\" Skill này cũng được tích hợp tự động vào cuối mỗi skill: zbd-research → Layer 1, zbd-matching → Layer 1+2, zbd-proposal → Layer 2+3"
+          - generic [ref=f27e136]:
+            - generic [ref=f27e137]: Product KB · Web Search
+            - generic [ref=f27e138]: v1.0 · Admin · Dùng 0 lần
+          - generic [ref=f27e139]:
+            - generic [ref=f27e140]: Kiểm thử
+            - generic "Chia sẻ" [ref=f27e143]
+            - generic "Tùy chọn" [ref=f27e149]
+        - generic [ref=f27e150] [cursor=pointer]:
+          - generic [ref=f27e151]:
+            - generic [ref=f27e153]: zbd-matching
+            - generic [ref=f27e154]: Mine
+          - generic [ref=f27e155]: "zBD Agent — Solution Matching Agent. Từ Enterprise Summary (output của zbd-research), tự động scoring và mapping pain points → giải pháp Zalo phù hợp, kèm điểm số, business value, expected KPI, reference customer cùng ngành. Trigger khi BD nói: \"matching cho [KH]\", \"ZBS nên đề xuất gì\", \"sản phẩm nào phù hợp\", \"chạy matching\", hoặc sau khi zbd-research hoàn tất và BD nhấn \"Tạo proposal\". Input: Enterprise Summary từ zbd-research, hoặc BD paste thông tin KH trực tiếp. Output: Solution Recommendation Card có scoring, ưu tiên rõ ràng, sẵn sàng đưa vào proposal."
+          - generic [ref=f27e156]:
+            - generic [ref=f27e157]: Product KB
+            - generic [ref=f27e158]: v1.0 · Admin · Dùng 0 lần
+          - generic [ref=f27e159]:
+            - generic [ref=f27e160]: Kiểm thử
+            - generic "Chia sẻ" [ref=f27e163]
+            - generic "Tùy chọn" [ref=f27e169]
+        - generic [ref=f27e170] [cursor=pointer]:
+          - generic [ref=f27e171]:
+            - generic [ref=f27e173]: zbd-proposal
+            - generic [ref=f27e174]: Mine
+          - generic [ref=f27e175]: "zBD Agent — Proposal Generation Agent. Từ Solution Recommendation (output của zbd-matching), tạo proposal hoàn chỉnh theo ZBS template chuẩn. AI chỉ sinh nội dung — giữ nguyên layout và brand identity Zalo. Output: PPTX (dùng ZBS Zalo template spec) hoặc DOCX. Trigger khi BD nói: \"tạo proposal cho [KH]\", \"build proposal\", \"xuất slide\", hoặc từ webapp khi BD nhấn \"Tạo proposal\" sau khi matching xong. Khác với zbd-research (nghiên cứu KH) và zbd-matching (chọn sản phẩm) — skill này chỉ chuyên tạo file proposal từ dữ liệu đã có."
+          - generic [ref=f27e176]:
+            - generic [ref=f27e177]: Product KB · Template
+            - generic [ref=f27e178]: v1.0 · Admin · Dùng 0 lần
+          - generic [ref=f27e179]:
+            - generic [ref=f27e180]: Kiểm thử
+            - generic "Chia sẻ" [ref=f27e183]
+            - generic "Tùy chọn" [ref=f27e189]
+        - generic [ref=f27e190] [cursor=pointer]:
+          - generic [ref=f27e191]:
+            - generic [ref=f27e193]: zbd-research
+            - generic [ref=f27e194]: Mine
+          - generic [ref=f27e195]: "zBD Agent — Customer Research Agent. Nghiên cứu toàn diện về một khách hàng/prospect theo đúng flow BD Zalo: từ thông tin ban đầu (tên, website, meeting notes) → thu thập 3 nguồn (BD input + AI web crawl + Internal KB) → tổng hợp Enterprise Summary đầy đủ với citation → gợi ý Decision Support bước tiếp theo. Trigger khi BD nói: \"research [tên công ty]\", \"tìm hiểu về [KH]\", \"brief về [công ty]\", \"chuẩn bị gặp [KH]\", \"KH này là ai\", hoặc paste link website/LinkedIn. Khác với zbd-matching (chỉ scoring sản phẩm) và zbd-proposal (tạo file) — skill này chuyên về thu thập và tổng hợp thông tin KH."
+          - generic [ref=f27e196]:
+            - generic [ref=f27e197]: 3 công cụ
+            - generic [ref=f27e198]: v1.0 · Admin · Dùng 0 lần
+          - generic [ref=f27e199]:
+            - generic [ref=f27e200]: Kiểm thử
+            - generic "Chia sẻ" [ref=f27e203]
+            - generic "Tùy chọn" [ref=f27e209]

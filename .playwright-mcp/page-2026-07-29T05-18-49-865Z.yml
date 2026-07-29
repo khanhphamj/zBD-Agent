@@ -1,0 +1,25 @@
+- generic [ref=f4e4]:
+  - generic [ref=f4e5]:
+    - generic [ref=f4e7]:
+      - generic [ref=f4e8]:
+        - generic [ref=f4e10]: zBD Agent
+        - generic [ref=f4e11]: Customer Research, Product Matching & Proposal Assistant
+      - generic [ref=f4e12]:
+        - generic [ref=f4e13]: Deep Research
+        - generic [ref=f4e16]: Product Matching
+        - generic [ref=f4e19]: Slide Builder
+    - generic [ref=f4e22]: © 2026 Zalo Business Solutions · Internal
+  - generic [ref=f4e24]:
+    - generic [ref=f4e25]: Đăng nhập
+    - generic [ref=f4e38]:
+      - text: Nhập mã OTP 6 số đã gửi đến
+      - generic [ref=f4e39]: kh***p@vng.com.vn
+    - generic [ref=f4e40]:
+      - generic [ref=f4e41]: "|"
+      - textbox [active] [ref=f4e48]
+    - generic [ref=f4e49]:
+      - generic [ref=f4e50]: Mã hết hạn sau 01:29
+      - generic [ref=f4e51]: Gửi lại mã (00:29)
+    - generic [ref=f4e52]: Nhập đủ 6 số — hệ thống tự xác thực
+    - generic [ref=f4e53] [cursor=pointer]: Dùng email khác
+    - generic [ref=f4e56]: OTP dùng một lần, sai 3 lần sẽ tạm khóa đăng nhập 15 phút.

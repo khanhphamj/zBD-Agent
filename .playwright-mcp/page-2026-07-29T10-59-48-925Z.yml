@@ -1,0 +1,73 @@
+- generic [ref=f9e4]:
+  - generic [ref=f9e5]:
+    - generic "Về Dashboard" [ref=f9e7] [cursor=pointer]: zBD Agent
+    - generic [ref=f9e10]:
+      - generic [ref=f9e11] [cursor=pointer]: Dashboard
+      - generic [ref=f9e14] [cursor=pointer]: Khách hàng
+      - generic [ref=f9e17] [cursor=pointer]: Proposal
+      - generic [ref=f9e20] [cursor=pointer]: Product Knowledge
+      - generic [ref=f9e23] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f9e26] [cursor=pointer]: Template Library
+    - generic [ref=f9e29]:
+      - generic [ref=f9e30] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f9e34] [cursor=pointer]: Quản trị
+      - generic [ref=f9e37]:
+        - generic "Hồ sơ & cài đặt" [ref=f9e38] [cursor=pointer]:
+          - generic [ref=f9e39]: kh
+          - generic [ref=f9e41]: khanhpp
+        - generic "Đăng xuất" [ref=f9e43] [cursor=pointer]
+  - generic [ref=f9e48]:
+    - generic [ref=f9e49]:
+      - generic [ref=f9e50] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f9e51]: ⌘K
+      - generic [ref=f9e52]: kh
+    - generic [ref=f9e59]:
+      - generic [ref=f9e60]:
+        - generic [ref=f9e61]: Chào khanhpp 👋
+        - generic [ref=f9e62]: Chạy Deep Research khách hàng mới
+      - generic [ref=f9e65]:
+        - generic [ref=f9e66] [cursor=pointer]:
+          - generic [ref=f9e68]: "1"
+          - generic [ref=f9e69]: Khách hàng phụ trách
+        - generic [ref=f9e70] [cursor=pointer]:
+          - generic [ref=f9e72]: "0"
+          - generic [ref=f9e73]: Đang Deep Research
+        - generic [ref=f9e74] [cursor=pointer]:
+          - generic [ref=f9e76]: "1"
+          - generic [ref=f9e77]: Hoàn tất nghiên cứu
+        - generic [ref=f9e78] [cursor=pointer]:
+          - generic [ref=f9e80]: "0"
+          - generic [ref=f9e81]: Proposal đang soạn
+        - generic [ref=f9e82] [cursor=pointer]:
+          - generic [ref=f9e84]: "0"
+          - generic [ref=f9e85]: Khách đang trao đổi
+        - generic [ref=f9e86] [cursor=pointer]:
+          - generic [ref=f9e88]: "0"
+          - generic [ref=f9e89]: Proposal hoàn tất
+      - generic [ref=f9e90]:
+        - generic [ref=f9e91]:
+          - generic [ref=f9e92]:
+            - generic [ref=f9e93]: Khách hàng cập nhật gần đây
+            - generic [ref=f9e94] [cursor=pointer]: Xem tất cả
+          - generic [ref=f9e95]:
+            - generic [ref=f9e96]: Doanh nghiệp
+            - generic "Sắp xếp theo độ ưu tiên" [ref=f9e97] [cursor=pointer]:
+              - text: Ưu tiên
+              - generic [ref=f9e98]: ↓
+            - generic [ref=f9e99]: Ngành
+            - generic [ref=f9e100]: Trạng thái
+            - generic [ref=f9e101]: Cập nhật
+          - generic [ref=f9e102] [cursor=pointer]:
+            - generic [ref=f9e106]:
+              - generic [ref=f9e107]: ZNT
+              - generic [ref=f9e108]: nhathuoclongchau.com.vn
+            - generic [ref=f9e109]: "0"
+            - generic [ref=f9e111]: Bán lẻ dược phẩm & Chăm sóc sức khỏe
+            - generic [ref=f9e112]: Hoàn tất nghiên cứu
+            - generic [ref=f9e114]: 11 phút trước
+        - generic [ref=f9e115]:
+          - generic [ref=f9e116]: Proposal gần đây
+          - generic [ref=f9e118]:
+            - generic [ref=f9e119]: Sản phẩm được đề xuất nhiều
+            - generic [ref=f9e120]: Chưa có dữ liệu đề xuất. Chạy matching giải pháp cho khách hàng để thống kê xuất hiện ở đây.

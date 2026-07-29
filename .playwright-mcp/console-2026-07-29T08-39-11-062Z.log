@@ -1,0 +1,5 @@
+[     158ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:629
+[     590ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 4 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm @ http://localhost:8000/zb-api-bridge.js:400
+[   16688ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 4 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm @ http://localhost:8000/zb-api-bridge.js:400
+[   39833ms] [INFO] [zb-bridge] sẵn sàng, API = /api/v1 @ http://localhost:8000/zb-api-bridge.js:629
+[   56938ms] [INFO] [zb-bridge] dữ liệu thật đã nạp: 0 khách hàng, 0 proposal, 0 KB, 4 skill, 0 template, 3 danh bạ, 0 yêu cầu, 4 người dùng, 6 sản phẩm @ http://localhost:8000/zb-api-bridge.js:400

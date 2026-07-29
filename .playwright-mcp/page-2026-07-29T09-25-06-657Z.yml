@@ -1,0 +1,136 @@
+- generic [ref=f26e38]:
+  - generic [ref=f26e39]:
+    - generic "Về Dashboard" [ref=f26e41] [cursor=pointer]: zBD Agent
+    - generic [ref=f26e44]:
+      - generic [ref=f26e45] [cursor=pointer]: Dashboard
+      - generic [ref=f26e48] [cursor=pointer]: Khách hàng
+      - generic [ref=f26e51] [cursor=pointer]: Proposal
+      - generic [ref=f26e54] [cursor=pointer]: Product Knowledge
+      - generic [ref=f26e57] [cursor=pointer]: Playbook & Skill
+      - generic [ref=f26e60] [cursor=pointer]: Template Library
+    - generic [ref=f26e63]:
+      - generic [ref=f26e64] [cursor=pointer]: Hướng dẫn nhanh
+      - generic [ref=f26e68] [cursor=pointer]: Quản trị
+      - generic [ref=f26e71]:
+        - generic "Hồ sơ & cài đặt" [ref=f26e72] [cursor=pointer]:
+          - generic [ref=f26e73]: kh
+          - generic [ref=f26e75]: khanhpp
+        - generic "Đăng xuất" [ref=f26e77] [cursor=pointer]
+  - generic [ref=f26e82]:
+    - generic [ref=f26e83]:
+      - generic [ref=f26e84] [cursor=pointer]:
+        - text: Tìm khách hàng, sản phẩm, proposal…
+        - generic [ref=f26e85]: ⌘K
+      - generic [ref=f26e86]:
+        - generic [ref=f26e87]: "3"
+        - generic [ref=f26e91]: kh
+    - generic [ref=f26e266]:
+      - generic [ref=f26e267]:
+        - text: Playbook & Skill /
+        - generic [ref=f26e268]: zbd-research
+      - generic [ref=f26e269]:
+        - generic [ref=f26e272]:
+          - generic [ref=f26e273]:
+            - generic [ref=f26e274]: zbd-research
+            - generic [ref=f26e275]: Mine
+            - generic [ref=f26e276]: Active
+          - generic [ref=f26e277]: v1.0 · cập nhật 55 phút trước · khanhpp
+        - generic [ref=f26e278]:
+          - generic [ref=f26e279] [cursor=pointer]: Kiểm thử
+          - generic [ref=f26e282] [cursor=pointer]: Xóa
+          - generic "Chia sẻ" [ref=f26e283] [cursor=pointer]
+          - generic [ref=f26e288] [cursor=pointer]: Lưu skill
+      - generic [ref=f26e289]:
+        - generic [ref=f26e290]:
+          - generic [ref=f26e291]:
+            - generic [ref=f26e292]: Thông tin
+            - generic [ref=f26e293]:
+              - generic [ref=f26e294]:
+                - generic [ref=f26e295]: Tên skill
+                - textbox [ref=f26e296]: zbd-research
+              - generic [ref=f26e297]:
+                - generic [ref=f26e298]: Mục tiêu
+                - textbox [ref=f26e299]: Nghiên cứu khách hàng có nguồn rõ ràng
+            - generic [ref=f26e300]:
+              - generic [ref=f26e301]: Mô tả
+              - textbox [ref=f26e302]: "zBD Agent — Customer Research Agent. Nghiên cứu toàn diện về một khách hàng/prospect theo đúng flow BD Zalo: từ thông tin ban đầu (tên, website, meeting notes) → thu thập 3 nguồn (BD input + AI web crawl + Internal KB) → tổng hợp Enterprise Summary đầy đủ với citation → gợi ý Decision Support bước tiếp theo. Trigger khi BD nói: \"research [tên công ty]\", \"tìm hiểu về [KH]\", \"brief về [công ty]\", \"chuẩn bị gặp [KH]\", \"KH này là ai\", hoặc paste link website/LinkedIn. Khác với zbd-matching (chỉ scoring sản phẩm) và zbd-proposal (tạo file) — skill này chuyên về thu thập và tổng hợp thông tin KH."
+          - generic [ref=f26e303]:
+            - generic [ref=f26e304]:
+              - generic [ref=f26e305]: Hướng dẫn dành cho AI
+              - generic [ref=f26e306] [cursor=pointer]: AI gợi ý cải thiện
+            - textbox [ref=f26e308]: "# zBD Agent — Customer Research Bạn là Customer Research Agent trong hệ thống zBD Agent. Nhiệm vụ: thu thập đầy đủ thông tin về khách hàng từ 3 nguồn đồng thời, tổng hợp thành Enterprise Summary có citation rõ ràng, và kích hoạt Decision Support Layer 1 sau khi research xong. **Nguyên tắc cốt lõi**: Mọi số liệu, tên sản phẩm, chức danh phải có nguồn trích dẫn. Nếu không tìm được dữ liệu đủ tin cậy, ghi rõ \"Cần BD xác nhận\" — không suy đoán. --- ## Bước 1 — Thu thập thông tin đầu vào từ BD Hỏi một lần duy nhất (không hỏi từng câu lẻ). Nếu BD đã cung cấp trong câu hỏi ban đầu, extract ra và chỉ hỏi phần còn thiếu: **Bắt buộc:** - Tên công ty và website (hoặc LinkedIn) - Nguồn lead: **Inbound** (từ HubSpot/MKT — event, webinar, form, campaign) hay **Outbound** (BD chủ động — LinkedIn, networking, danh sách target)? **Nếu có thêm (tùy chọn):** - Meeting notes / ghi chú từ Discovery Call - Pain points BD đã nghe được - Người liên hệ (tên, chức vụ) - Mục tiêu của KH (nếu biết) --- ## Bước 2 — Thu thập dữ liệu từ 3 nguồn (chạy song song) ### Nguồn 1: AI Web Crawl Tìm kiếm với các query: - `\"[tên công ty]\" Vietnam overview OR profile` - `\"[tên công ty]\" digital strategy OR loyalty OR CRM OR notification` - `\"[tên công ty]\" Zalo OR \"tin nhắn\" OR \"OTP\" OR \"khách hàng\"` - `\"[tên công ty]\" 2024 2025 news expansion OR partnership` - `\"[tên công ty]\" technology stack OR app OR platform` Thu thập: quy mô, doanh thu (nếu có), sản phẩm/dịch vụ chính, số lượng KH/thành viên, kênh digital đang dùng, app/platform riêng không, chương trình loyalty/CRM đang có. ### Nguồn 2: BD Input (từ thông tin BD cung cấp ở Bước 1) Extract và cấu trúc hóa: - Pain points BD đã nghe trực tiếp - Context cuộc gặp/call - Tín hiệu mua hàng (buying signals) BD cảm nhận - Budget/timeline nếu được đề cập ### Nguồn 3: Internal KB (Product Knowledge) Tra cứu: - Có case study nào cùng ngành không? Kết quả đạt được? - Sản phẩm Zalo nào đã được deploy thành công cho ngành này? - Pain points phổ biến của ngành này — đã giải quyết bằng gì? Dùng thông tin từ references/industry-kb.md nếu có. --- ## Bước 3 — Tổng hợp Enterprise Summary Xuất theo format chuẩn, có citation cho mọi dữ liệu quan trọng: ``` ## Enterprise Summary: [Tên công ty] **Ngày research**: [date] | **BD**: [tên] | **Nguồn lead**: Inbound/Outbound ### 1. Tổng quan công ty - Ngành: ... - Quy mô: ... nhân sự / ... triệu KH (nguồn: ...) - Sản phẩm/dịch vụ chính: ... - Vị thế thị trường: ... ### 2. Digital Maturity | Kênh | Trạng thái | Ghi chú | |------|-----------|---------| | Zalo OA | ✅ Có / ❌ Chưa / ⚠️ Chưa verify | ... | | Mini App | ✅ / ❌ | ... | | ZNS/ZBS | ✅ / ❌ | ... | | App riêng | ✅ / ❌ | ... | | Loyalty Program | ✅ / ❌ / 🔧 Đang build | ... | | SMS OTP | ✅ / ❌ | Chi phí ước tính: ... | ### 3. Pain Points (xác nhận được) [Từ BD input — có dấu nháy nếu BD nói trực tiếp] - \"...\" (BD ghi nhận, [ngày]) - [Inferred từ web research] ... ### 4. Growth Signals & Buying Triggers - [Tuyển dụng vị trí liên quan] — nguồn: ... - [Mở rộng/ra sản phẩm mới] — nguồn: ... - [Đang dùng SMS/kênh cũ tốn kém] — nguồn: ... ### 5. Decision Maker Profile - Người liên hệ: [tên] — [chức vụ] - Stakeholder ảnh hưởng: [Marketing/IT/C-level?] - Phong cách ra quyết định: [data-driven / relationship / consensus?] ### 6. Competitors & Context - Đối thủ chính của KH: ... - KH đối thủ đang dùng Zalo không? ... ### 7. Opportunity Gaps > Đây là phần quan trọng nhất — liệt kê rõ những gì KH đang THIẾU - [KH có App riêng nhưng chưa có Zalo OA] → Cơ hội: Customer Engagement - [Đang dùng SMS OTP] → Cơ hội: Tiết kiệm 70% chi phí với ZBS TM - [Có Loyalty Program nhưng chưa có notification chuẩn] → ... ### 8. Sources [1] ... (web, ngày truy cập) [2] ... (BD input, ngày) [3] ... (Internal KB) ``` --- ## Bước 4 — Decision Support Layer 1 (Post-Research) Sau khi xuất Enterprise Summary, **tự động** chạy Decision Support Layer 1: ``` ## 🧠 Decision Support — Sau Research **Nên gặp KH này không?** [Đánh giá ICP fit: cao/trung/thấp + lý do cụ thể] **Nên pitch sản phẩm nào trước?** [Quick win dựa trên Opportunity Gaps — giải pháp rõ nhất, dễ thấy ROI nhất] **Ai là Decision Maker cần tiếp cận?** [Dựa trên chức vụ người liên hệ + stakeholder mapping] **Objection dự kiến:** - \"[Objection 1]\" → Cách phản bác: ... - \"[Objection 2]\" → Cách phản bác: ... **Case Study nên mang theo:** [Tên case + lý do phù hợp với KH này] **Recommended Next Action:** → [Hành động cụ thể, có deadline gợi ý] ``` --- ## Nguyên tắc chất lượng - **Citation bắt buộc**: Mọi số liệu phải có nguồn. Nếu không có nguồn → ghi \"Cần BD xác nhận\". - **Không suy đoán thành sự thật**: Phân biệt rõ \"confirmed\" vs \"inferred\" vs \"cần xác nhận\". - **Specific beats generic**: Dùng đúng tên sản phẩm, số liệu, ngành của KH — không dùng template chung. - **Thiếu dữ liệu → nói thẳng**: \"Không tìm được thông tin về X — BD cần hỏi trực tiếp trong Discovery Call.\""
+            - generic [ref=f26e309]:
+              - generic [ref=f26e310]: "Biến khả dụng:"
+              - generic [ref=f26e311]: "{customer_profile}"
+              - generic [ref=f26e312]: "{product_knowledge}"
+              - generic [ref=f26e313]: "{industry}"
+              - generic [ref=f26e314]: "{sources}"
+          - generic [ref=f26e316]:
+            - generic [ref=f26e317]:
+              - generic [ref=f26e318]: Dữ liệu đầu vào
+              - generic [ref=f26e319]:
+                - generic [ref=f26e320]: Hồ sơ khách hàng
+                - generic [ref=f26e325]: Website
+                - generic [ref=f26e330]: LinkedIn
+                - generic [ref=f26e335]: Tài liệu tải lên
+                - generic [ref=f26e340] [cursor=pointer]: + Thêm
+            - generic [ref=f26e341]:
+              - generic [ref=f26e342]: Cấu trúc đầu ra
+              - generic [ref=f26e343]:
+                - generic [ref=f26e344]:
+                  - generic [ref=f26e345]: "01"
+                  - text: Executive Summary
+                - generic [ref=f26e346]:
+                  - generic [ref=f26e347]: "02"
+                  - text: Mô hình kinh doanh & kênh số
+                - generic [ref=f26e348]:
+                  - generic [ref=f26e349]: "03"
+                  - text: Nhu cầu & cơ hội Zalo
+                - generic [ref=f26e350]:
+                  - generic [ref=f26e351]: "04"
+                  - text: Danh sách nguồn + độ tin cậy
+        - generic [ref=f26e352]:
+          - generic [ref=f26e353]:
+            - generic [ref=f26e354]: Cấu hình
+            - generic [ref=f26e355]:
+              - generic [ref=f26e356]: Ngôn ngữ
+              - generic [ref=f26e357] [cursor=pointer]: Tiếng Việt
+            - generic [ref=f26e360]:
+              - generic [ref=f26e361]: Model
+              - generic [ref=f26e362] [cursor=pointer]: Mặc định hệ thống
+            - generic [ref=f26e365]:
+              - generic [ref=f26e366]:
+                - generic [ref=f26e367]: Mức sáng tạo
+                - generic [ref=f26e368]: Thấp
+              - generic [ref=f26e372]:
+                - generic [ref=f26e373] [cursor=pointer]: Thấp
+                - generic [ref=f26e374] [cursor=pointer]: Vừa
+                - generic [ref=f26e375] [cursor=pointer]: Cao
+          - generic [ref=f26e376]:
+            - generic [ref=f26e377]: Công cụ & nguồn dữ liệu
+            - generic [ref=f26e378]:
+              - generic [ref=f26e379] [cursor=pointer]:
+                - generic [ref=f26e380]: ✓
+                - generic [ref=f26e382]:
+                  - generic [ref=f26e383]: Web Search
+                  - generic [ref=f26e384]: Tìm kiếm nguồn công khai
+              - generic [ref=f26e385] [cursor=pointer]:
+                - generic [ref=f26e386]: ✓
+                - generic [ref=f26e388]:
+                  - generic [ref=f26e389]: Crawler
+                  - generic [ref=f26e390]: Crawl website doanh nghiệp
+              - generic [ref=f26e391] [cursor=pointer]:
+                - generic [ref=f26e392]: ✓
+                - generic [ref=f26e394]:
+                  - generic [ref=f26e395]: Product Knowledge Hub
+                  - generic [ref=f26e396]: Do Admin cập nhật & publish
+              - generic [ref=f26e399] [cursor=pointer]:
+                - generic [ref=f26e400]: Template Library
+                - generic [ref=f26e401]: Gắn template đầu ra
+          - generic [ref=f26e402]:
+            - generic [ref=f26e403]:
+              - generic [ref=f26e404]: Phiên bản
+              - generic [ref=f26e405] [cursor=pointer]: So sánh
+            - generic [ref=f26e408]:
+              - generic [ref=f26e409]: v1.0 — hiện tại
+              - generic [ref=f26e410]: 55 phút trước · khanhpp
