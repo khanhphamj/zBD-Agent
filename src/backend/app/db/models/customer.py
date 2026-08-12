@@ -23,7 +23,7 @@ from app.db.models.enums import (
 )
 
 if TYPE_CHECKING:
-    from app.db.models.product import Product
+    from app.db.models.product import Product, ProductService
     from app.db.models.user import User
 
 
@@ -186,7 +186,16 @@ class CustomerSolution(Base, PublicIdMixin, TimestampMixin):
     product_id: Mapped[str | None] = mapped_column(
         ForeignKey("products.id", ondelete="SET NULL"), index=True
     )
+    # Dịch vụ con trúng match; product_id luôn được server suy từ service nên
+    # cặp này không bao giờ lệch nhau. NULL = match ở mức sản phẩm (fallback).
+    service_id: Mapped[str | None] = mapped_column(
+        ForeignKey("product_services.id", ondelete="SET NULL"), index=True
+    )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
+    # Chuỗi suy luận của Product Matching: painpoint đọc ra từ dữ kiện Deep
+    # Research -> cơ hội khai thác -> rationale nối sang sản phẩm.
+    painpoint: Mapped[str | None] = mapped_column(Text)
+    opportunity: Mapped[str | None] = mapped_column(Text)
     rationale: Mapped[str | None] = mapped_column(Text)
 
     fit_score: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -198,6 +207,15 @@ class CustomerSolution(Base, PublicIdMixin, TimestampMixin):
     selected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     job_id: Mapped[str | None] = mapped_column(String(32), index=True)
     evidence: Mapped[list[dict[str, Any]]] = mapped_column(JSONType, default=list, nullable=False)
+    # Chi tiết từng dịch vụ khớp trong CÙNG sản phẩm (một phương án = một sản
+    # phẩm): [{serviceId, serviceName, fitScore, painpoint, opportunity,
+    # rationale, expectedImpact, package, pricingNote, evidence[]}].
+    # Các cột đơn (painpoint, package...) giữ giá trị của dịch vụ điểm cao nhất
+    # để UI card cũ vẫn hiển thị được.
+    service_matches: Mapped[list[dict[str, Any]]] = mapped_column(
+        JSONType, default=list, nullable=False
+    )
 
     customer: Mapped[Customer] = relationship(back_populates="solutions")
     product: Mapped["Product | None"] = relationship(lazy="joined")
+    service: Mapped["ProductService | None"] = relationship(lazy="joined")

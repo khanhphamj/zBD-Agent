@@ -45,7 +45,7 @@ from app.db.models.library import (
     TemplateSlide,
     TemplateVersion,
 )
-from app.db.models.product import Product
+from app.db.models.product import Product, ProductService
 from app.db.models.proposal import (
     AiChatMessage,
     AiSuggestedChange,
@@ -104,6 +104,7 @@ __all__ = [
     "OtpChallenge",
     "Permission",
     "Product",
+    "ProductService",
     "Proposal",
     "ProposalApproval",
     "ProposalComment",

@@ -14,6 +14,7 @@ from app.integrations.search import SearchHit, search_client
 log = get_logger(__name__)
 
 MARKET = settings.research_market_label
+FOCUS = settings.focus_prompt_block
 
 ANGLES = [
     ("profile", "Tổng quan pháp nhân, năm thành lập, trụ sở, cổ đông/tập đoàn mẹ"),
@@ -28,6 +29,14 @@ ANGLES = [
     ("news", "Tin tức mới nhất, thay đổi chiến lược, gọi vốn, mở rộng"),
     ("regulation", "Quy định ngành ảnh hưởng tới kênh liên lạc/dữ liệu khách hàng"),
     ("painpoints", "Điểm đau về kênh liên lạc, chi phí SMS, loyalty, tự động hoá CSKH"),
+    ("zalofoot", "Hiện diện Zalo CHÍNH CHỦ của doanh nghiệp: Zalo OA (tên, có dấu "
+                 "xác minh), Mini App, ZBS Template (tên cũ ZNS) đang dùng, link Zalo "
+                 "gắn trên website/fanpage"),
+    ("journey", "Hành trình khách cuối & chi phí kênh: thông báo giao dịch/OTP đang đi "
+                "SMS hay app, tổng đài/CSKH, remarketing, loyalty/tích điểm — kênh nào, "
+                "quy mô, chi phí nếu nguồn có"),
+    ("rivalzalo", "Ngành & đối thủ dùng Zalo thế nào: use case Zalo OA/ZNS/Mini App đã "
+                  "có trong ngành; đối thủ trực tiếp nào đã mở OA/Mini App"),
 ]
 
 PLAN_SYSTEM = f"""\
@@ -41,6 +50,7 @@ Phạm vi bắt buộc: chỉ quan tâm hoạt động của doanh nghiệp **t�
 Bỏ qua công ty trùng tên ở nước khác và hoạt động của công ty mẹ ở thị trường
 ngoài {MARKET}.
 
+{FOCUS}
 Nguyên tắc ra truy vấn:
 - Truy vấn tiếng Việt là chính; thêm truy vấn tiếng Anh khi cần số liệu ngành.
 - Mỗi truy vấn nhắm MỘT góc cụ thể, đừng chung chung.
@@ -53,6 +63,11 @@ Nguyên tắc ra truy vấn:
 - Bỏ qua bài SEO dịch vụ (thành lập công ty, xin giấy phép, bán phần mềm/SMS) —
   chúng dùng tên doanh nghiệp làm từ khoá chứ không có dữ kiện về doanh nghiệp.
 - Đừng lặp lại truy vấn đã chạy, đừng tìm lại góc đã đủ dữ liệu.
+- Góc thị trường/đối thủ là BẮT BUỘC: nếu hồ sơ chưa ghi ngành, tự suy ngành từ
+  kết quả đã có rồi vẫn phải ra truy vấn thị trường + đối thủ.
+- Góc `rivalzalo`: khi kết quả đã lộ tên đối thủ trực tiếp, ra truy vấn
+  `"<tên đối thủ>" Zalo OA` hoặc `"<tên đối thủ>" Zalo Mini App` cho 2-3 đối thủ
+  lớn nhất — đây là dữ kiện social proof để tư vấn giải pháp Zalo.
 
 Trả về DUY NHẤT JSON:
 {{
@@ -125,10 +140,17 @@ def seed_queries(name: str, website: str | None, industry: str | None) -> list[t
     out.append((f"{name} {MARKET} tin tức mới nhất", "news"))
     out.append((f"{name} {MARKET} tuyển dụng", "hiring"))
     out.append((f'"{name}" {MARKET} báo cáo thường niên công bố thông tin', "scale"))
-    press = " OR ".join(f"site:{d}" for d in settings.research_preferred_domains[:6])
+    press = " OR ".join(f"site:{d}" for d in settings.press_domains)
     out.append((f"{name} ({press})", "news"))
     if industry:
         out.append((f"{industry} {MARKET} thị trường đối thủ", "market"))
+        out.append((f"{industry} {MARKET} Zalo OA ZNS Mini App", "rivalzalo"))
+    # Hiện diện Zalo chính chủ: zalo.me là host trang OA công khai; query thứ hai
+    # bắt bài PR/hướng dẫn "X ra mắt Zalo OA/Mini App" khi trang OA không được index.
+    out.append((f'site:zalo.me "{name}"', "zalofoot"))
+    out.append((f'"{name}" Zalo OA Mini App ZNS', "zalofoot"))
+    # Kênh tương tác khách cuối hiện tại — nền cho bài toán ROI chuyển kênh.
+    out.append((f'"{name}" chăm sóc khách hàng tổng đài app tích điểm SMS', "journey"))
     return out
 
 
@@ -158,6 +180,7 @@ async def run_agent(
     on_hit: Callable[[SearchHit], Awaitable[None]] | None = None,
     on_step: Callable[[str, float], Awaitable[None]] | None = None,
     admin: Any | None = None,
+    guidance: str = "",
 ) -> AgentState:
     state = AgentState()
     plan_profile = profile("research.plan")
@@ -210,7 +233,9 @@ async def run_agent(
         )
 
         try:
-            completion = await maas.run("research.plan", PLAN_SYSTEM, prompt, admin=admin)
+            completion = await maas.run(
+                "research.plan", PLAN_SYSTEM + guidance, prompt, admin=admin
+            )
             plan = completion.as_json()
         except MaasError as exc:
             log.warning("research_plan_failed", round=round_no, error=str(exc))

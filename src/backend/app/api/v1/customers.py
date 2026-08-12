@@ -10,7 +10,6 @@ from app.core.errors import ForbiddenError, NotFoundError, ValidationError
 from app.core.pagination import PageParams, page_params, paginate, parse_sort
 from app.core.security import now
 from app.core.text import clean_website, normalize
-from app.core.text import initials as make_initials
 from app.db.models.customer import (
     Customer,
     CustomerActivity,
@@ -126,7 +125,12 @@ async def create_customer(
         id=Customer.make_id(),
         name=body.name,
         name_norm=normalize(body.name),
-        short_name=body.shortName or make_initials(body.name, 3).upper(),
+        # Không tự sinh tên ngắn: initials(name, 3) chỉ đúng khi tên có >= 3
+        # từ, còn lại nó cắt name[:3] nên "Highland" thành "HIG". short_name là
+        # tên hiển thị ngắn do người dùng đặt, không phải chữ cái đầu cho avatar
+        # (frontend tự tính initials từ shortName || name). Để None thì
+        # serializer trả null và frontend fallback về name.
+        short_name=body.shortName,
         website=website,
         website_norm=normalize(website) if website else None,
         industry=body.industry,
@@ -195,6 +199,34 @@ async def create_customer(
 
     await session.refresh(customer)
     return {"customer": customer_row(customer), "researchJobId": job_id}
+
+
+@router.get(
+    "/customers/{customer_id}/report-narrative",
+    summary="Lời phân tích narrative cho Deep Research Report",
+)
+async def get_report_narrative(
+    customer_id: str, user: CurrentUser, session: SessionDep, force: bool = False
+) -> dict[str, Any]:
+    """Đoạn văn phân tích cho /report.html — sinh một lần mỗi research run,
+    cache trong customer.profile["reportNarrative"]. 503 khi MaaS chưa sẵn
+    sàng để client tự dựng fallback prose từ dữ kiện."""
+    customer, _ = await require(
+        session, user, ResourceType.CUSTOMER, customer_id, Permission.VIEW
+    )
+    from fastapi import HTTPException
+
+    from app.services.report_narrative import report_narrative
+    from app.workers.research import _ai_config
+
+    try:
+        return await report_narrative(
+            session, customer, admin=await _ai_config(session), force=force
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=503, detail=f"Chưa sinh được narrative: {exc}"
+        ) from exc
 
 
 @router.get("/customers/{customer_id}", summary="Chi tiết khách hàng — đủ 5 tab")

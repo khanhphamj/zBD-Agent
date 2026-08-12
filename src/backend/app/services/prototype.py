@@ -9,6 +9,19 @@ log = get_logger(__name__)
 
 BRIDGE_TAG = '<script src="/zb-api-bridge.js"></script>'
 
+BRIDGE_SRC_ATTR = 'src="/zb-api-bridge.js"'
+
+
+def _bridge_stamp(frontend_dir: Path) -> str:
+    """Đổi mỗi lần zb-api-bridge.js đổi. Dùng làm ?v= để trình duyệt không
+    dùng lại bản bridge cũ — bản cũ thiếu hàm mới thì các guard trong HTML đã vá
+    sẽ âm thầm rơi về hành vi mock của prototype."""
+    try:
+        st = (frontend_dir / "zb-api-bridge.js").stat()
+    except OSError:
+        return "0"
+    return f"{int(st.st_mtime)}-{st.st_size}"
+
 ICON_TAG = '<link rel="icon" href="/favicon.ico">'
 
 PAGE_TITLE = "zBD Agent"
@@ -921,11 +934,11 @@ def _patch_prod_hub_sub(src: str) -> tuple[str, int]:
     if anchor in src:
         prop = (
             "prodHubSub: (() => { const __ps = this._PRODS(); "
-            "const __fam = Array.from(new Set(__ps.map((p) => p.family).filter(Boolean))); "
             "const __src = Array.from(new Set(__ps.flatMap((p) => (p.sources || [])"
             ".map((s) => String(s[0]).split('/')[0])))).slice(0, 4); "
             "return __ps.length + ' sản phẩm'"
-            " + (__fam.length ? ' · ' + __fam.join(' · ') : '')"
+            # nhãn family (Zalo Business Service/Zalo Platforms) đã bỏ theo
+            # yêu cầu BD — nhóm nội bộ, không có nghĩa với người xem
             " + (__src.length ? ' · nguồn: ' + __src.join(', ') : ''); })(), "
         )
         src = src.replace(anchor, _jsafe(prop, "prodHubSub") + anchor, 1)
@@ -1920,7 +1933,7 @@ CT_RUNNO_NEW = (
 CT_PROPS_ANCHOR = "custRunNo:"
 CT_PROPS = (
     "custSummary: (() => { const d = this._zbCustDetail() || {}; "
-    "const pf = d.profile || {}; return pf.marketPosition || d.notes "
+    "const pf = d.profile || {}; return pf.executiveSummary || pf.marketPosition || d.notes "
     "|| 'Chưa có tóm tắt — chạy Deep Research để dựng hồ sơ.'; })(), "
     "custBizTags: (() => { const pf = ((this._zbCustDetail() || {}).profile) || {}; "
     "return [pf.industry, pf.market, pf.size, pf.hq].filter(Boolean)"
@@ -1983,7 +1996,7 @@ SUMMARY_NEW = (
 SUMMARY_PROPS_ANCHOR = "rSrcCount:"
 SUMMARY_PROPS = (
     "rSummary: (() => { const d = this.state.rDetail || {}; const pf = d.profile || {}; "
-    "return pf.marketPosition || d.notes || (this._zbFacts().length "
+    "return pf.executiveSummary || pf.marketPosition || d.notes || (this._zbFacts().length "
     "? 'Deep Research đã thu thập ' + this._zbFacts().length + ' dữ kiện từ ' "
     "+ this._zbSources().length + ' nguồn. Xem chi tiết bên dưới.' "
     ": 'Chưa có tóm tắt — chạy Deep Research để dựng hồ sơ.'); })(), "
@@ -2300,16 +2313,27 @@ def _patch_create_flows(src: str) -> tuple[str, int]:
         "const __shared = (this.state.kbScope2 || 0) === 1; "
         "const __desc = (this.state.kbDesc || '').trim() || null; "
         "const __isSkill = (this.state.libTab || 'kb') === 'skill'; "
+        "const __files = (this.state.kbNewFiles || []).slice(); "
         "const __p = __isSkill "
         "? __zb.createSkill({ name: nm, description: __desc, shared: __shared }) "
         ": __zb.createKb({ name: nm, description: __desc, shared: __shared, "
         "url: (this.state.kbUrl || '').trim() }); "
         "this.setState({ kbNew: false, kbName: '', kbDesc: '', kbUrl: '', kbScope2: 0, "
-        "kbNewQ: 0, libScope: 0 }); "
-        "__p.then((r) => this._toast(r.ok "
-        "? ((__isSkill ? 'Đã lưu skill “' : 'Đã lưu Knowledge Base “') + nm "
-        "+ '” vào database') "
-        ": ('Không lưu được: ' + (r.message || 'lỗi backend')))); "
+        "kbNewQ: 0, kbNewFiles: [], kbNewRej: [], libScope: 0 }); "
+        "__p.then((r) => { "
+        "if (!r.ok) { this._toast('Không lưu được: ' "
+        "+ (r.message || 'lỗi backend')); return; } "
+        "const __label = (__isSkill ? 'Đã lưu skill “' : 'Đã lưu Knowledge Base “') "
+        "+ nm + '”'; "
+        "if (__isSkill || !__files.length || !__zb.uploadKbFiles) { "
+        "this._toast(__label + ' vào database'); return; } "
+        "this._toast(__label + ' — đang tải ' + __files.length + ' tài liệu…'); "
+        "__zb.uploadKbFiles(r.id, __files).then((u) => this._toast(u.ok "
+        "? ('Đã thêm ' + u.created + '/' + __files.length "
+        "+ ' tài liệu vào “' + nm + '”' "
+        "+ (u.failed ? ' — ' + u.failed + ' file lỗi' : '')) "
+        ": ('Tạo kho xong nhưng tải tài liệu thất bại: ' "
+        "+ (u.message || 'lỗi backend')))); }); "
         "return; } "
     )
     if kb_old in src:
@@ -2333,6 +2357,10 @@ def _patch_create_flows(src: str) -> tuple[str, int]:
         "this._toast('Đã nhập ' + r.created + ' skill vào database' "
         "+ (bad.length ? ' — ' + bad.length + ' file lỗi: ' + bad[0].message : '')); "
         "}); return; } "
+        "if (__zb && __zb.ready && __zb.pickKbFiles) { "
+        "__zb.pickKbFiles().then((r) => { "
+        "if (!r || r.cancelled) return; "
+        "this._zbKbStage(r.files); }); return; } "
         "const n = (this.state.kbNewQ || 0) + 1; this.setState({ kbNewQ: n }); "
         "this._toast('Đã chọn ' + n + ' tài liệu cho kho mới'); }"
     )
@@ -2621,6 +2649,954 @@ def _patch_logout(src: str) -> tuple[str, int]:
     return src, hits
 
 
+
+def _patch_kb_upload_real(src: str, nl: str) -> tuple[str, int]:
+    """Uploader của prototype là mô phỏng: kbUpPick lấy tên từ pool cứng, kbUpRun
+    chỉ chạy setTimeout rồi ghi vào state cục bộ. Chèn nhánh thật lên đầu mỗi hàm;
+    code mô phỏng giữ lại làm fallback khi chưa có bridge."""
+    hits = 0
+
+    pick_anchor = f"kbUpPick: () => {{{nl}"
+    pick_guard = (
+        f"kbUpPick: () => {{{nl}"
+        "        const __zb = window.__ZB; "
+        "if (__zb && __zb.ready && __zb.pickKbFiles) { "
+        "__zb.pickKbFiles().then((r) => { "
+        "if (!r || r.cancelled) return; "
+        "const __q = (this.state.kbUpQ || []).slice(); "
+        "const __rej = (this.state.kbUpRej || []).slice(); "
+        "(r.files || []).forEach((f) => { "
+        "if (__q.some((x) => x.name === f.name)) return; "
+        "const __why = __zb.checkKbFile(f); "
+        "if (__why) { __rej.push({ name: f.name, why: __why }); return; } "
+        "__q.push({ name: f.name, "
+        "type: (f.name.split('.').pop() || '').toUpperCase(), "
+        "mb: f.size / 1048576, file: f }); }); "
+        "this.setState({ kbUpQ: __q, kbUpRej: __rej }); }); "
+        f"return; }}{nl}"
+    )
+    if pick_anchor in src:
+        src = src.replace(pick_anchor, pick_guard, 1)
+        hits += 1
+
+    run_anchor = (
+        f"kbUpRun: () => {{{nl}"
+        f"        const q = this.state.kbUpQ || [];{nl}"
+        f"        if (!q.length) {{ this._toast('Chọn ít nhất một file'); return; }}{nl}"
+    )
+    run_guard = run_anchor + (
+        "        const __zb = window.__ZB; "
+        "const __kbId = (this.state.kb || {}).__id; "
+        "const __real = q.filter((x) => x.file).map((x) => x.file); "
+        "if (__zb && __zb.ready && (this.state.upFor || 'kb') === 'kb' "
+        "&& __kbId && __real.length) { "
+        "(this._kbUpT || []).forEach(clearTimeout); "
+        "this.setState({ kbUp: 'run', kbUpPct: 8 }); "
+        "this._kbUpT = [18, 36, 58, 79].map((v, i) => "
+        "setTimeout(() => this.setState({ kbUpPct: v }), 200 + i * 260)); "
+        "__zb.uploadKbFiles(__kbId, __real).then((u) => { "
+        "(this._kbUpT || []).forEach(clearTimeout); "
+        "const __ok = (u.items || []).filter((x) => x.status === 'ok') "
+        ".map((x) => x.name); "
+        "if (!u.ok || u.failed) { this.setState({ kbUp: 'fail', "
+        "kbUpPct: Math.round((__ok.length / q.length) * 100), kbUpOk: __ok }); return; } "
+        "this.setState({ kbUp: 'done', kbUpPct: 100, kbUpOk: __ok, "
+        "kbTouch: this._kbTouch((this.state.kb || {}).name) }); }); "
+        f"return; }}{nl}"
+    )
+    if run_anchor in src:
+        src = src.replace(run_anchor, run_guard, 1)
+        hits += 1
+
+    return src, hits
+
+
+def _patch_kb_live_files(src: str) -> tuple[str, int]:
+    """Danh sách tài liệu trong kho vốn đọc từ overlay cục bộ (kbAdds). Đổi sang
+    đọc GET /knowledge-bases/{id}/files, và mang theo id file để xoá được."""
+    hits = 0
+
+    files_old = (
+        "_kbFiles(kb) { const k = kb || this.state.kb || {}; "
+        "return this._kbAdded(k).concat(k.files || []); }"
+    )
+    files_new = (
+        "_kbFiles(kb) { const k = kb || this.state.kb || {}; "
+        "const __zb = window.__ZB; "
+        "if (__zb && __zb.ready && k.__id && __zb.loadKbFiles) { "
+        "const __live = __zb.kbFiles[k.__id]; "
+        "if (__live) return __live; "
+        "__zb.loadKbFiles(k.__id); return []; } "
+        "return this._kbAdded(k).concat(k.files || []); }"
+    )
+    if files_old in src:
+        src = src.replace(files_old, _jsafe(files_new, "_kbFiles"), 1)
+        hits += 1
+
+    count_old = (
+        "_kbDocCount(kb) { const k = kb || this.state.kb || {}; "
+        "return (k.docs || 0) + this._kbAdded(k).length; }"
+    )
+    count_new = (
+        "_kbDocCount(kb) { const k = kb || this.state.kb || {}; "
+        "const __zb = window.__ZB; "
+        "if (__zb && __zb.ready && k.__id && __zb.kbFiles[k.__id]) "
+        "return __zb.kbFiles[k.__id].length; "
+        "return (k.docs || 0) + this._kbAdded(k).length; }"
+    )
+    if count_old in src:
+        src = src.replace(count_old, _jsafe(count_new, "_kbDocCount"), 1)
+        hits += 1
+
+    det_old = (
+        "open: () => this.setState({ fileDet: { name: f[0], type: f[1], "
+        "size: f[2], by: f[3] } }),"
+    )
+    det_new = (
+        "open: () => this.setState({ fileDet: { name: f[0], type: f[1], "
+        "size: f[2], by: f[3], id: f[4] } }),"
+    )
+    if det_old in src:
+        src = src.replace(det_old, _jsafe(det_new, "fileDetId"), 1)
+        hits += 1
+
+    return src, hits
+
+
+def _patch_real_deletes(src: str) -> tuple[str, int]:
+    """Mọi nút Xoá của prototype chỉ đổi state cục bộ nên F5 là thấy lại. Nối
+    từng `run:` vào endpoint DELETE thật; nhánh cũ giữ làm fallback."""
+    hits = 0
+    bq = chr(92) + chr(34)
+
+    pairs: list[tuple[str, str]] = []
+
+    # ── skill ──
+    pairs.append((
+        "run: () => { this.go('skills'); "
+        f"this._toast('Đã xóa skill {bq}' "
+        "+ ((this.state.skill || {}).name || 'Skill mới') "
+        f"+ '{bq}'); }} }}),",
+        "run: () => { const __zb = window.__ZB; "
+        "const __sid = (this.state.skill || {}).__id; "
+        "const __nm = (this.state.skill || {}).name || 'Skill mới'; "
+        "this.go('skills'); "
+        "if (__zb && __zb.ready && __zb.deleteSkill && __sid) { "
+        "__zb.deleteSkill(__sid).then((r) => this._toast(r.ok "
+        "? ('Đã xóa skill “' + __nm + '”') "
+        ": ('Không xóa được skill: ' + (r.message || 'lỗi backend')))); return; } "
+        "this._toast('Đã xóa skill “' + __nm + '”'); } }),",
+    ))
+
+    # ── knowledge base ──
+    pairs.append((
+        "run: () => { const n = (this.state.kb || {}).name; this.go('skills'); "
+        f"this._toast('Đã xóa Knowledge Base {bq}' + n + '{bq}'); }} }}),",
+        "run: () => { const __zb = window.__ZB; "
+        "const __kid = (this.state.kb || {}).__id; "
+        "const n = (this.state.kb || {}).name; this.go('skills'); "
+        "if (__zb && __zb.ready && __zb.deleteKb && __kid) { "
+        "__zb.deleteKb(__kid).then((r) => this._toast(r.ok "
+        "? ('Đã xóa Knowledge Base “' + n + '”') "
+        ": ('Không xóa được kho: ' + (r.message || 'lỗi backend')))); return; } "
+        "this._toast('Đã xóa Knowledge Base “' + n + '”'); } }),",
+    ))
+
+    # ── tài liệu trong kho ──
+    pairs.append((
+        f"run: () => this._toast('Đã xóa {bq}' + (d.name || '') "
+        f"+ '{bq} khỏi kho') }}); }},",
+        "run: () => { const __zb = window.__ZB; "
+        "const __kid = (this.state.kb || {}).__id; "
+        "if (__zb && __zb.ready && __zb.deleteKbFile && __kid && d.id) { "
+        "__zb.deleteKbFile(__kid, d.id).then((r) => this._toast(r.ok "
+        "? ('Đã xóa “' + (d.name || '') + '” khỏi kho') "
+        ": ('Không xóa được tài liệu: ' + (r.message || 'lỗi backend')))); return; } "
+        "this._toast('Đã xóa “' + (d.name || '') + '” khỏi kho'); } }); },",
+    ))
+
+    # ── template ──
+    pairs.append((
+        "run: () => { this.go('templates'); "
+        f"this._toast('Đã xóa template {bq}' "
+        "+ ((this.state.tpl || {}).name || 'Template mới') "
+        f"+ '{bq}'); }} }}),",
+        "run: () => { const __zb = window.__ZB; "
+        "const __tid = (this.state.tpl || {}).__id; "
+        "const __nm = (this.state.tpl || {}).name || 'Template mới'; "
+        "this.go('templates'); "
+        "if (__zb && __zb.ready && __zb.deleteTemplate && __tid) { "
+        "__zb.deleteTemplate(__tid).then((r) => this._toast(r.ok "
+        "? ('Đã xóa template “' + __nm + '”') "
+        ": ('Không xóa được template: ' + (r.message || 'lỗi backend')))); return; } "
+        "this._toast('Đã xóa template “' + __nm + '”'); } }),",
+    ))
+
+    # ── proposal (xoá nhiều) ──
+    pairs.append((
+        "run: () => this._rowExit(selKeys, () => { "
+        "const g = Object.assign({}, this.state.propGone || {}); "
+        "selKeys.forEach((k) => { g[k] = true; }); "
+        "this.setState({ propGone: g, propSel: {} }); "
+        "this._toast('Đã xóa ' + selKeys.length + ' proposal'); }) }),",
+        "run: () => this._rowExit(selKeys, () => { const __zb = window.__ZB; "
+        "const g = Object.assign({}, this.state.propGone || {}); "
+        "selKeys.forEach((k) => { g[k] = true; }); "
+        "this.setState({ propGone: g, propSel: {} }); "
+        "if (__zb && __zb.ready && __zb.deleteProposalsByTitle) { "
+        "__zb.deleteProposalsByTitle(selKeys).then((r) => this._toast(r.ok "
+        "? ('Đã xóa ' + r.deleted + ' proposal') "
+        ": ('Không xóa được proposal: ' + (r.message || 'lỗi backend')))); return; } "
+        "this._toast('Đã xóa ' + selKeys.length + ' proposal'); }) }),",
+    ))
+
+    for i, (old, new) in enumerate(pairs):
+        if old in src:
+            src = src.replace(old, _jsafe(new, f"delete[{i}]"), 1)
+            hits += 1
+
+    return src, hits
+
+
+
+def _patch_lib_card_deletes(src: str) -> tuple[str, int]:
+    """Nút Xoá trên thẻ thư viện (menu ⋯) và trên hàng khách hàng vốn chỉ set cờ
+    cục bộ (libGone / custGone) nên F5 là thấy lại. Nối vào DELETE thật; nếu backend
+    từ chối thì bỏ cờ để hàng hiện lại kèm lý do, thay vì im lặng rồi quay về sau."""
+    hits = 0
+
+    lib_old = (
+        "_libRemove(kind, name, label) { return () => { "
+        "const g = Object.assign({}, this.state.libGone || {}); "
+        "g[kind + '::' + name] = true; "
+        "this.setState({ libGone: g, rowMenu: null }); "
+        "this._toast('Đã xóa ' + label); }; }"
+    )
+    lib_new = (
+        "_libRemove(kind, name, label) { return () => { "
+        "const __zb = window.__ZB; "
+        "const g = Object.assign({}, this.state.libGone || {}); "
+        "g[kind + '::' + name] = true; "
+        "this.setState({ libGone: g, rowMenu: null }); "
+        "if (__zb && __zb.ready && __zb.deleteLibItem) { "
+        "__zb.deleteLibItem(kind, name).then((r) => { "
+        "if (r.ok) { this._toast('Đã xóa ' + label); return; } "
+        "const g2 = Object.assign({}, this.state.libGone || {}); "
+        "delete g2[kind + '::' + name]; "
+        "this.setState({ libGone: g2 }); "
+        "this._toast('Không xóa được ' + label + ': ' "
+        "+ (r.message || 'lỗi backend')); }); return; } "
+        "this._toast('Đã xóa ' + label); }; }"
+    )
+    if lib_old in src:
+        src = src.replace(lib_old, _jsafe(lib_new, "_libRemove"), 1)
+        hits += 1
+
+    # Hàng khách hàng — chuỗi này xuất hiện ở 2 chỗ (bảng đầy đủ + bảng gọn).
+    row_old = (
+        "remove: () => this._rowExit([c.key], () => { "
+        "const g = Object.assign({}, this.state.custGone || {}); "
+        "g[c.key] = true; this.setState({ custGone: g }); "
+        "this._toast('Đã xóa ' + c.short); }) }),"
+    )
+    row_new = (
+        "remove: () => this._rowExit([c.key], () => { "
+        "const __zb = window.__ZB; "
+        "const g = Object.assign({}, this.state.custGone || {}); "
+        "g[c.key] = true; this.setState({ custGone: g }); "
+        "if (__zb && __zb.ready && __zb.deleteCustomers) { "
+        "__zb.deleteCustomers([c.key]).then((r) => this._toast(r.ok "
+        "? ('Đã xóa ' + c.short) "
+        ": ('Không xóa được ' + c.short + ': ' + (r.message || 'lỗi backend')))); "
+        "return; } "
+        "this._toast('Đã xóa ' + c.short); }) }),"
+    )
+    n_rows = src.count(row_old)
+    if n_rows:
+        src = src.replace(row_old, _jsafe(row_new, "custRowRemove"))
+        hits += n_rows
+
+    # Xoá nhiều khách hàng. Lưu trữ không có endpoint nên vẫn để cục bộ.
+    bulk_old = (
+        "run: () => { const del = verb === 'Xóa'; this._rowExit(selKeys, () => { "
+        "const g = Object.assign({}, del ? (this.state.custGone || {}) "
+        ": (this.state.custArch || {})); "
+        "selKeys.forEach((k) => { g[k] = true; }); "
+        "this.setState(del ? { custGone: g, custSel: {} } "
+        ": { custArch: g, custSel: {} }); "
+        "this._toast(past + ' ' + selKeys.length + ' khách hàng'); }); }"
+    )
+    bulk_new = (
+        "run: () => { const del = verb === 'Xóa'; const __zb = window.__ZB; "
+        "this._rowExit(selKeys, () => { "
+        "const g = Object.assign({}, del ? (this.state.custGone || {}) "
+        ": (this.state.custArch || {})); "
+        "selKeys.forEach((k) => { g[k] = true; }); "
+        "this.setState(del ? { custGone: g, custSel: {} } "
+        ": { custArch: g, custSel: {} }); "
+        "if (del && __zb && __zb.ready && __zb.deleteCustomers) { "
+        "__zb.deleteCustomers(selKeys).then((r) => this._toast(r.ok "
+        "? (past + ' ' + r.deleted + ' khách hàng') "
+        ": ('Không xóa được khách hàng: ' + (r.message || 'lỗi backend')))); "
+        "return; } "
+        "this._toast(past + ' ' + selKeys.length + ' khách hàng'); }); }"
+    )
+    if bulk_old in src:
+        src = src.replace(bulk_old, _jsafe(bulk_new, "custBulkRemove"), 1)
+        hits += 1
+
+    return src, hits
+
+
+
+def _patch_kb_new_ui(src: str) -> tuple[str, int]:
+    """Vùng “Nguồn nội dung” của hộp Thêm Knowledge Base: dựng lại thành khu upload
+    thật — nút Chọn file, chip định dạng, kéo-thả, danh sách file đã chọn/bị từ chối."""
+    hits = 0
+
+    # ── helper dùng chung cho cả click-pick và drag-drop ──
+    stage_anchor = "_kbAdded(kb) {"
+    stage_new = (
+        "_zbKbStage(files) { "
+        "const __zb = window.__ZB; "
+        "const keep = (this.state.kbNewFiles || []).slice(); "
+        "const rej = (this.state.kbNewRej || []).slice(); "
+        "(files || []).forEach((f) => { "
+        "if (keep.some((x) => x.name === f.name && x.size === f.size)) return; "
+        "const why = (__zb && __zb.checkKbFile) ? __zb.checkKbFile(f) : null; "
+        "if (why) { rej.push(f.name + ' — ' + why); return; } "
+        "keep.push(f); }); "
+        "this.setState({ kbNewFiles: keep, kbNewRej: rej, kbNewQ: keep.length, "
+        "kbNewDragging: false }); "
+        "if (keep.length) this._toast('Đã chọn ' + keep.length + ' tài liệu cho kho mới'); "
+        "else if (rej.length) this._toast(rej[rej.length - 1]); "
+        "} "
+        "_kbAdded(kb) {"
+    )
+    if stage_anchor in src:
+        src = src.replace(stage_anchor, _jsafe(stage_new, "_zbKbStage"), 1)
+        hits += 1
+
+    # ── props: tiêu đề, chip định dạng, danh sách file, handler kéo-thả ──
+    props_anchor = "      kbNewDropStyle: 'border:1.5px dashed '"
+    props_new = (
+        "      kbNewDropTitle: (this.state.libTab || 'kb') === 'skill' "
+        "? 'Nhập skill từ file' "
+        ": (((this.state.kbNewFiles || []).length) "
+        "? ('Đã chọn ' + (this.state.kbNewFiles || []).length + ' tài liệu') "
+        ": 'Thêm tài liệu vào kho'), "
+        "kbNewFmts: ((this.state.libTab || 'kb') === 'skill' ? [] "
+        ": [['PDF', '#B93327', '#FDF0EE'], ['DOCX · Word', '#1A30A0', '#E8F1FF'], "
+        "['XLSX · Excel', '#0B7A3E', '#E7F8EF'], ['PPTX', '#B26A00', '#FFF4E5']]) "
+        ".map((f) => ({ label: f[0], "
+        "chip: 'font:600 10px Roboto,sans-serif;border-radius:20px;padding:3px 9px;"
+        "color:' + f[1] + ';background:' + f[2] })), "
+        "kbNewLimitText: (this.state.libTab || 'kb') === 'skill' "
+        "? '' : 'Tối đa 50 MB mỗi file', "
+        "kbNewHasFiles: ((this.state.kbNewFiles || []).length) > 0, "
+        "kbNewFileRows: (this.state.kbNewFiles || []).map((f, i) => ({ "
+        "name: f.name, "
+        "ext: ((f.name.split('.').pop() || '').toUpperCase()), "
+        "size: (f.size < 1048576 "
+        "? (Math.max(1, Math.round(f.size / 1024)) + ' KB') "
+        ": ((f.size / 1048576).toFixed(1).replace('.', ',') + ' MB')), "
+        "chip: 'flex:none;font:600 9.5px Roboto,sans-serif;border-radius:5px;"
+        "padding:3px 7px;' + (f.name.toLowerCase().endsWith('.pdf') "
+        "? 'color:#B93327;background:#FDF0EE' "
+        ": (f.name.toLowerCase().endsWith('.docx') "
+        "? 'color:#1A30A0;background:#E8F1FF' "
+        ": (f.name.toLowerCase().endsWith('.xlsx') "
+        "? 'color:#0B7A3E;background:#E7F8EF' "
+        ": 'color:#B26A00;background:#FFF4E5'))), "
+        "remove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); "
+        "const n = (this.state.kbNewFiles || []).slice(); n.splice(i, 1); "
+        "this.setState({ kbNewFiles: n, kbNewQ: n.length }); } })), "
+        "kbNewHasRej: ((this.state.kbNewRej || []).length) > 0, "
+        "kbNewRejRows: (this.state.kbNewRej || []).map((r, i) => ({ text: r, "
+        "dismiss: (e) => { if (e && e.stopPropagation) e.stopPropagation(); "
+        "const n = (this.state.kbNewRej || []).slice(); n.splice(i, 1); "
+        "this.setState({ kbNewRej: n }); } })), "
+        "kbNewDragOver: (e) => { if (e && e.preventDefault) e.preventDefault(); "
+        "if (!this.state.kbNewDragging) this.setState({ kbNewDragging: true }); }, "
+        "kbNewDragLeave: (e) => { if (e && e.preventDefault) e.preventDefault(); "
+        "if (this.state.kbNewDragging) this.setState({ kbNewDragging: false }); }, "
+        "kbNewDrop: (e) => { if (e && e.preventDefault) e.preventDefault(); "
+        "const dt = e && e.dataTransfer; "
+        "const list = (dt && dt.files) ? Array.prototype.slice.call(dt.files) : []; "
+        "if ((this.state.libTab || 'kb') === 'skill') { "
+        "this.setState({ kbNewDragging: false }); "
+        "this._toast('Tab Skill chỉ nhận file .skill — bấm để chọn'); return; } "
+        "if (!list.length) { this.setState({ kbNewDragging: false }); return; } "
+        "this._zbKbStage(list); }, "
+        "kbNewDropStyle: 'border:1.5px dashed '"
+    )
+    if props_anchor in src:
+        src = src.replace(props_anchor, _jsafe(props_new, "kbNewProps"), 1)
+        hits += 1
+
+    # ── style của vùng upload: thêm trạng thái đang kéo vào ──
+    style_old = (
+        "kbNewDropStyle: 'border:1.5px dashed ' + ((this.state.kbNewQ || 0) "
+        "? '#0068FF;color:#0068FF;background:#F7FAFF' : '#B6C3DD;color:#8FA2C7') "
+        "+ ';border-radius:10px;padding:16px;text-align:center;"
+        "font:12px Roboto,sans-serif;cursor:pointer;"
+        "transition:all .22s cubic-bezier(.22,1,.36,1)',"
+    )
+    style_new = (
+        "kbNewDropStyle: 'border:1.5px dashed ' + (this.state.kbNewDragging "
+        "? '#0068FF;background:#EAF2FF' "
+        ": (((this.state.kbNewFiles || []).length || (this.state.kbNewQ || 0)) "
+        "? '#0068FF;background:#F7FAFF' : '#B6C3DD;background:#FCFDFF')) "
+        "+ ';border-radius:12px;padding:18px 16px;text-align:center;cursor:pointer;"
+        "transition:all .22s cubic-bezier(.22,1,.36,1)',"
+    )
+    if style_old in src:
+        src = src.replace(style_old, _jsafe(style_new, "kbNewDropStyle"), 1)
+        hits += 1
+
+    # ── markup: thay dải dashed một dòng bằng khu upload đầy đủ ──
+    q = chr(92) + chr(34)          # \"  — dấu ngoặc kép đã escape trong chuỗi JS
+    c = "<" + chr(92) + "u002F"    # </  — thẻ đóng đã escape
+
+    mk_old = (
+        f"<div sc-camel-on-click={q}{{{{ kbNewPick }}}}{q} "
+        f"style={q}{{{{ kbNewDropStyle }}}}{q}>{{{{ kbNewDropText }}}}{c}div>"
+    )
+    mk_new = (
+        f"<div sc-camel-on-click={q}{{{{ kbNewPick }}}}{q} "
+        f"sc-camel-on-drag-over={q}{{{{ kbNewDragOver }}}}{q} "
+        f"sc-camel-on-drag-leave={q}{{{{ kbNewDragLeave }}}}{q} "
+        f"sc-camel-on-drop={q}{{{{ kbNewDrop }}}}{q} "
+        f"style={q}{{{{ kbNewDropStyle }}}}{q}>"
+        f"<div style={q}font:600 13px Roboto,sans-serif;color:#021F4E;"
+        f"margin-bottom:3px{q}>{{{{ kbNewDropTitle }}}}{c}div>"
+        f"<div style={q}font:11.5px Roboto,sans-serif;color:#8FA2C7;"
+        f"margin-bottom:12px{q}>{{{{ kbNewDropText }}}}{c}div>"
+        f"<div style={q}display:inline-flex;align-items:center;gap:6px;"
+        f"background:#0068FF;color:#fff;border-radius:8px;padding:9px 16px;"
+        f"font:600 12px Roboto,sans-serif{q} "
+        f"style-hover={q}background:#1A30A0{q}>+ Chọn file{c}div>"
+        f"<div style={q}display:flex;justify-content:center;gap:6px;"
+        f"margin-top:13px;flex-wrap:wrap{q}>"
+        f"<sc-for list={q}{{{{ kbNewFmts }}}}{q} as={q}ft{q} "
+        f"hint-placeholder-count={q}4{q}>"
+        f"<span style={q}{{{{ ft.chip }}}}{q}>{{{{ ft.label }}}}{c}span>"
+        f"{c}sc-for>{c}div>"
+        f"<div style={q}margin-top:9px;font:10.5px Roboto,sans-serif;"
+        f"color:#A8B6D4{q}>{{{{ kbNewLimitText }}}}{c}div>"
+        f"{c}div>"
+        # danh sách file đã chọn
+        f"<sc-if value={q}{{{{ kbNewHasFiles }}}}{q} "
+        f"hint-placeholder-val={q}{{{{ false }}}}{q}>"
+        f"<div style={q}margin-top:10px;display:flex;flex-direction:column;"
+        f"gap:6px{q}>"
+        f"<sc-for list={q}{{{{ kbNewFileRows }}}}{q} as={q}fr{q} "
+        f"hint-placeholder-count={q}2{q}>"
+        f"<div style={q}display:flex;align-items:center;gap:9px;"
+        f"border:1px solid #DCE6F7;border-radius:9px;padding:9px 11px;"
+        f"background:#fff{q}>"
+        f"<span style={q}{{{{ fr.chip }}}}{q}>{{{{ fr.ext }}}}{c}span>"
+        f"<span style={q}flex:1;min-width:0;overflow:hidden;"
+        f"text-overflow:ellipsis;white-space:nowrap;font:12.5px Roboto,sans-serif;"
+        f"color:#021F4E{q}>{{{{ fr.name }}}}{c}span>"
+        f"<span style={q}flex:none;font:11px Roboto,sans-serif;"
+        f"color:#8FA2C7{q}>{{{{ fr.size }}}}{c}span>"
+        f"<span sc-camel-on-click={q}{{{{ fr.remove }}}}{q} "
+        f"style={q}flex:none;cursor:pointer;color:#8FA2C7;"
+        f"font:600 14px Roboto,sans-serif;padding:0 2px{q} "
+        f"style-hover={q}color:#D9483B{q}>✕{c}span>"
+        f"{c}div>{c}sc-for>{c}div>{c}sc-if>"
+        # danh sách file bị từ chối
+        f"<sc-if value={q}{{{{ kbNewHasRej }}}}{q} "
+        f"hint-placeholder-val={q}{{{{ false }}}}{q}>"
+        f"<div style={q}margin-top:8px;display:flex;flex-direction:column;"
+        f"gap:6px{q}>"
+        f"<sc-for list={q}{{{{ kbNewRejRows }}}}{q} as={q}rj{q} "
+        f"hint-placeholder-count={q}1{q}>"
+        f"<div style={q}display:flex;align-items:flex-start;gap:8px;"
+        f"background:#FDECEA;border:1px solid #F3D3CE;border-radius:9px;"
+        f"padding:9px 11px{q}>"
+        f"<span style={q}flex:1;text-align:left;font:11.5px Roboto,sans-serif;"
+        f"color:#B93327{q}>{{{{ rj.text }}}}{c}span>"
+        f"<span sc-camel-on-click={q}{{{{ rj.dismiss }}}}{q} "
+        f"style={q}flex:none;cursor:pointer;color:#B93327;"
+        f"font:600 13px Roboto,sans-serif{q}>✕{c}span>"
+        f"{c}div>{c}sc-for>{c}div>{c}sc-if>"
+    )
+    if mk_old in src:
+        src = src.replace(mk_old, mk_new, 1)
+        hits += 1
+
+    return src, hits
+
+
+
+MATCH_METHODS = (
+    "_zbMatchRun() { const z = window.__ZB; const c = this.state.cust || {}; "
+    "if (!z || !z.ready) { this._toast('Chưa kết nối backend'); return; } "
+    "if (!c.__id) { this._toast('Chưa có hồ sơ khách hàng thật để khớp sản phẩm'); return; } "
+    "this._toast('Đang chạy Product Matching trên dữ liệu thật…'); "
+    "z.runProductMatching(c.__id).then((r) => { "
+    "if (!r.ok) { this._toast('Không chạy được Product Matching: ' "
+    "+ (r.message || 'lỗi backend')); return; } "
+    "this._zbMatchGo(r.jobId, c.name); }); }"
+    " _zbMatchGo(jobId, name) { clearTimeout(this._zbMT); "
+    "clearInterval(this._zbMCreep); "
+    "this.setState({ mPct: 0, mReal: 0, mStage: '' }); "
+    "this._zbMCreep = setInterval(() => { "
+    "if (!this.state.mJobId) { clearInterval(this._zbMCreep); return; } "
+    "const real = this.state.mReal || 0; "
+    "const cap = Math.min(96, real + 30); "
+    "const now = this.state.mPct || 0; "
+    "if (now < cap) this.setState({ mPct: now + 1 }); }, 700); "
+    "this._zbMJid = this._jobStart('match', 'Product Matching · ' + (name || 'Khách hàng'), "
+    "() => this.setState({ screen: 'customer', tab: 'matching' })); "
+    "this.setState({ mJobId: jobId }); "
+    "this._zbMatchPoll(jobId); }"
+    " _zbMatchPoll(jobId) { const z = window.__ZB; if (!z || !z.jobStatus) return; "
+    "z.jobStatus(jobId).then((r) => { "
+    "if (this.state.mJobId !== jobId) return; "
+    "if (!r.ok) { this._zbMMiss = (this._zbMMiss || 0) + 1; "
+    "if (this._zbMMiss < 4) "
+    "{ this._zbMT = setTimeout(() => this._zbMatchPoll(jobId), 2000); return; } "
+    "clearInterval(this._zbMCreep); this._jobKill('match'); "
+    "this.setState({ mJobId: null }); "
+    "this._toast('Không đọc được trạng thái Product Matching'); return; } "
+    "this._zbMMiss = 0; "
+    "this._jobPct(this._zbMJid, r.progress, r.done ? 'Product Matching xong' : null); "
+    "if (r.done) { clearInterval(this._zbMCreep); "
+    "this.setState({ mJobId: null, mPct: 100, mReal: 100 }); "
+    "const cid = (this.state.cust || {}).__id; "
+    "if (z.reloadSolutions && cid) z.reloadSolutions(cid).then((s) => { "
+    "const n = ((s || {}).primary || []).length; "
+    "this._toast(n ? ('Product Matching xong — ' + n + ' phương án từ dữ liệu thật') "
+    ": 'Product Matching xong nhưng chưa có phương án nào'); }); return; } "
+    "if (r.failed) { clearInterval(this._zbMCreep); this._jobKill('match'); "
+    "this.setState({ mJobId: null }); "
+    "this._toast('Product Matching thất bại: ' + (r.error || 'lỗi backend')); return; } "
+    "this._zbMT = setTimeout(() => this._zbMatchPoll(jobId), 1500); }); }"
+    " _zbPlanSet(name, inPlan) { const z = window.__ZB; "
+    "const cid = (this.state.cust || {}).__id; "
+    "if (!z || !z.ready || !cid || !z.setSolutionInPlan) return; "
+    "z.setSolutionInPlan(cid, name, inPlan).then((r) => { "
+    "if (!r.ok) this._toast('Không lưu được phương án: ' "
+    "+ (r.message || 'lỗi backend')); }); } "
+)
+
+
+def _patch_product_matching(src: str, nl: str) -> tuple[str, int]:
+    """Nối màn Product Matching vào worker matching thật + bảng solutions."""
+    hits = 0
+    bq = chr(92) + chr(34)
+
+    # ── _MATCH(): đọc phương án thật theo khách hàng đang mở ──
+    match_anchor = (
+        f"_MATCH() {{{nl}"
+        f"    if (this.__match) return this.__match;{nl}"
+    )
+    match_new = (
+        f"{MATCH_METHODS}"
+        f"_MATCH() {{{nl}"
+        "    const __zb = window.__ZB; "
+        "const __cid = (this.state.cust || {}).__id; "
+        "if (__zb && __zb.ready && __cid && __zb.loadSolutions) { "
+        "const __live = __zb.solutions[__cid]; "
+        "if (__live) return __live; "
+        "__zb.loadSolutions(__cid); "
+        f"return {{ primary: [], extra: [], plan: [] }}; }}{nl}"
+        f"    if (this.__match) return this.__match;{nl}"
+    )
+    if match_anchor in src:
+        src = src.replace(match_anchor, match_new, 1)
+        hits += 1
+
+    # ── nút “Chạy lại matching” ──
+    rerun_old = (
+        "rerunMatching: () => { this._toast('Đang chạy lại Product Matching…'); "
+        "clearTimeout(this._rmT); this._rmT = setTimeout(() => this._toast("
+        "'Product Matching xong — 5 phương án đã xếp hạng lại'), 1600); },"
+    )
+    rerun_new = "rerunMatching: () => this._zbMatchRun(),"
+    if rerun_old in src:
+        src = src.replace(rerun_old, _jsafe(rerun_new, "rerunMatching"), 1)
+        hits += 1
+
+    # ── thêm / bỏ sản phẩm khỏi phương án: ghi vào DB ──
+    add_old = (
+        "add: () => { const n = Object.assign({}, this.state.planOn); "
+        "n[m.name] = !inPlan; this.setState({ planOn: n }); "
+        f"this._toast(inPlan ? 'Đã bỏ {bq}' + m.name + '{bq} khỏi phương án' "
+        f": 'Đã thêm {bq}' + m.name + '{bq} vào phương án giải pháp'); }},"
+    )
+    add_new = (
+        "add: () => { const n = Object.assign({}, this.state.planOn); "
+        "n[m.name] = !inPlan; this.setState({ planOn: n }); "
+        "this._zbPlanSet(m.name, !inPlan); "
+        "this._toast(inPlan ? ('Đã bỏ “' + m.name + '” khỏi phương án') "
+        ": ('Đã thêm “' + m.name + '” vào phương án giải pháp')); },"
+    )
+    if add_old in src:
+        src = src.replace(add_old, _jsafe(add_new, "matchAdd"), 1)
+        hits += 1
+
+    drop_old = (
+        "run: () => { const n = Object.assign({}, this.state.planOn); "
+        "n[m.name] = false; this.setState({ planOn: n }); "
+        f"this._toast('Đã loại {bq}' + m.name + '{bq} khỏi phương án'); }} }})"
+    )
+    drop_new = (
+        "run: () => { const n = Object.assign({}, this.state.planOn); "
+        "n[m.name] = false; this.setState({ planOn: n }); "
+        "this._zbPlanSet(m.name, false); "
+        "this._toast('Đã loại “' + m.name + '” khỏi phương án'); } })"
+    )
+    if drop_old in src:
+        src = src.replace(drop_old, _jsafe(drop_new, "matchDrop"), 1)
+        hits += 1
+
+    return src, hits
+
+
+
+def _patch_plan_summary(src: str) -> tuple[str, int]:
+    """Bỏ '6/8 nhu cầu' cứng; đếm số dữ kiện Deep Research mà plan thật dẫn chứng."""
+    old = (
+        "planSummary: (() => { const pl = this._planList(); "
+        "const main = pl.filter((x) => x[1] === 'Chính').length; "
+        "return main + ' sản phẩm chính + ' + (pl.length - main) "
+        "+ ' bổ trợ. Giải quyết 6/8 nhu cầu đã xác định.'; })(),"
+    )
+    new = (
+        "planSummary: (() => { const pl = this._planList(); "
+        "const main = pl.filter((x) => x[1] === 'Chính').length; "
+        "const head = main + ' sản phẩm chính + ' + (pl.length - main) + ' bổ trợ.'; "
+        "const __zb = window.__ZB; "
+        "const __cid = (this.state.cust || {}).__id; "
+        "const __s = (__zb && __zb.ready && __cid) ? __zb.solutions[__cid] : null; "
+        "if (!__s) return head; "
+        "const inPlan = {}; pl.forEach((x) => { inPlan[x[0]] = 1; }); "
+        "const facts = {}; "
+        "(__s.primary || []).forEach((p) => { if (!inPlan[p.name]) return; "
+        "(p.__evi || []).forEach((id) => { facts[id] = 1; }); }); "
+        "const n = Object.keys(facts).length; "
+        "return head + (n ? (' Dẫn chứng từ ' + n + ' dữ kiện Deep Research.') "
+        ": ' Chưa có dữ kiện nào được dẫn chứng.'); })(),"
+    )
+    if old in src:
+        return src.replace(old, _jsafe(new, "planSummary"), 1), 1
+    return src, 0
+
+
+
+def _patch_match_criteria(src: str) -> tuple[str, int]:
+    """Panel tiêu chí đối chiếu: số cứng -> chỉ số suy ra từ phương án thật."""
+    hits = 0
+    q = chr(92) + chr(34)
+    c = "<" + chr(92) + "u002F"
+    nlx = chr(92) + "n"
+
+    # ── prop: các dòng tiêu chí tính từ solutions thật ──
+    prop_anchor = (
+        "      products: this._PRODS()"
+        ".filter((pd) => !this._libGone('prod', pd.name))"
+    )
+    prop_new = (
+        "      matchCriteria: (() => { const __zb = window.__ZB; "
+        "const __cid = (this.state.cust || {}).__id; "
+        "const __s = (__zb && __zb.ready && __cid) ? __zb.solutions[__cid] : null; "
+        "const G = 'margin-left:auto;font:600 11px Roboto,sans-serif;color:#12A150'; "
+        "const A = 'margin-left:auto;font:600 11px Roboto,sans-serif;color:#E8A13C'; "
+        "const N = 'margin-left:auto;font:600 11px Roboto,sans-serif;color:#8FA2C7'; "
+        "if (!__s) return [{ label: 'Trạng thái', value: 'Chưa kết nối backend', "
+        "valStyle: N }]; "
+        "const pri = __s.primary || []; const ext = __s.extra || []; "
+        "if (!pri.length) return [ "
+        "{ label: 'Phương án đã khớp', value: 'Chưa chạy matching', valStyle: N }, "
+        "{ label: 'Sản phẩm trong danh mục', value: String(ext.length), valStyle: N } ]; "
+        "const facts = {}; "
+        "pri.forEach((p) => (p.__evi || []).forEach((id) => { facts[id] = 1; })); "
+        "const nf = Object.keys(facts).length; "
+        "const strong = pri.filter((p) => p.score >= 80).length; "
+        "const top = pri.reduce((a, p) => Math.max(a, p.score || 0), 0); "
+        "return [ "
+        "{ label: 'Phương án đã khớp', value: pri.length + ' sản phẩm', valStyle: G }, "
+        "{ label: 'Điểm phù hợp cao nhất', value: String(top), "
+        "valStyle: top >= 80 ? G : A }, "
+        "{ label: 'Phương án ưu tiên (≥80đ)', value: strong + '/' + pri.length, "
+        "valStyle: strong ? G : A }, "
+        "{ label: 'Dữ kiện được dẫn chứng', value: nf + ' dữ kiện', "
+        "valStyle: nf ? G : A }, "
+        "{ label: 'Sản phẩm chưa đề xuất', value: String(ext.length), valStyle: N } ]; "
+        "})(),"
+        f"{nlx}{nlx}"
+        "      products: this._PRODS()"
+        ".filter((pd) => !this._libGone('prod', pd.name))"
+    )
+    if prop_anchor in src:
+        src = src.replace(prop_anchor, _jsafe(prop_new, "matchCriteria"), 1)
+        hits += 1
+
+    # ── markup: 5 dòng cứng -> sc-for trên matchCriteria ──
+    head = (
+        f"<div style={q}margin-top:12px;display:flex;flex-direction:column;gap:9px{q}>"
+    )
+    tail = f"3 case{c}span>{c}div>"
+    repl = (
+        f"<div style={q}margin-top:12px;display:flex;flex-direction:column;gap:9px{q}>"
+        f"<sc-for list={q}{{{{ matchCriteria }}}}{q} as={q}mc{q} "
+        f"hint-placeholder-count={q}4{q}>"
+        f"<div style={q}display:flex;align-items:center;"
+        f"font:11.5px Roboto,sans-serif;color:#4d5f85{q}>"
+        f"<span>{{{{ mc.label }}}}{c}span>"
+        f"<span style={q}{{{{ mc.valStyle }}}}{q}>{{{{ mc.value }}}}{c}span>"
+        f"{c}div>{c}sc-for>"
+    )
+    start = src.find("Tiêu chí đối chiếu")
+    if start > 0:
+        h = src.find(head, start)
+        t = src.find(tail, h) if h > 0 else -1
+        if h > 0 and t > 0:
+            src = src[:h] + repl + src[t + len(tail):]
+            hits += 1
+
+    return src, hits
+
+
+
+def _patch_match_gaps(src: str) -> tuple[str, int]:
+    """Nốt cuối: nút matching ở luồng tạo khách hàng + phụ đề xếp hạng."""
+    hits = 0
+    q = chr(92) + chr(34)
+    c = "<" + chr(92) + "u002F"
+
+    # ── 1. openMatchingNew: chạy job thật, và mở đúng customer thật (có __id) ──
+    open_old = (
+        "openMatchingNew: () => { this._jobMatch(this.state.createdName); "
+        "this.setState({ screen: 'customer', tab: 'matching', "
+        "cust: { name: this.state.createdName, web: this.state.createdWeb, "
+        "init: this._init(this.state.createdName), industry: 'Retail F&B' } }); },"
+    )
+    open_new = (
+        "openMatchingNew: () => { const z = window.__ZB; "
+        "const id = this.state.createdId; const nm = this.state.createdName; "
+        # cust phải là bản đã map từ backend, vì _MATCH() cần cust.__id mới đọc
+        # được phương án thật; thiếu __id là rơi về mock.
+        "const live = (z && z.ready && id) "
+        "? (z.customers || []).filter((x) => x.__id === id)[0] : null; "
+        "this.setState({ screen: 'customer', tab: 'matching', "
+        "cust: live || { name: nm, web: this.state.createdWeb, "
+        "init: this._init(nm), industry: '—' } }); "
+        "if (z && z.ready && id && z.runProductMatching) { "
+        "this._toast('Đang chạy Product Matching trên dữ liệu thật…'); "
+        "z.runProductMatching(id).then((r) => { "
+        "if (!r.ok) { this._toast('Không chạy được Product Matching: ' "
+        "+ (r.message || 'lỗi backend')); return; } "
+        "this._zbMatchGo(r.jobId, nm); }); return; } "
+        "this._jobMatch(nm); },"
+    )
+    if open_old in src:
+        src = src.replace(open_old, _jsafe(open_new, "openMatchingNew"), 1)
+        hits += 1
+
+    # ── 2. prop cho phụ đề xếp hạng ──
+    prop_anchor = "      matchCriteria: (() => { const __zb = window.__ZB;"
+    prop_new = (
+        "      matchRankNote: (() => { const __zb = window.__ZB; "
+        "if (this.state.mJobId) return (this.state.mStage "
+        "|| 'Đang chạy Product Matching') + '…'; "
+        "const __cid = (this.state.cust || {}).__id; "
+        "const __s = (__zb && __zb.ready && __cid) ? __zb.solutions[__cid] : null; "
+        "const pri = (__s && __s.primary) || []; "
+        "if (!pri.length) return 'Chưa có phương án — bấm Chạy lại matching để AI "
+        "đối chiếu dữ kiện Deep Research với danh mục sản phẩm.'; "
+        "const facts = {}; "
+        "pri.forEach((p) => (p.__evi || []).forEach((id) => { facts[id] = 1; })); "
+        "const nf = Object.keys(facts).length; "
+        "return 'Xếp hạng theo điểm phù hợp do AI đánh giá' "
+        "+ (nf ? (' — dẫn chứng từ ' + nf + ' dữ kiện đã xác nhận trong Deep Research.') "
+        ": '.'); })(),"
+        "      matchCriteria: (() => { const __zb = window.__ZB;"
+    )
+    if prop_anchor in src:
+        src = src.replace(prop_anchor, _jsafe(prop_new, "matchRankNote"), 1)
+        hits += 1
+
+    # ── 3. markup phụ đề ──
+    note_old = (
+        f"<div style={q}font:11px Roboto,sans-serif;color:#8FA2C7;margin-top:5px{q}>"
+        f"Xếp hạng theo 13 tiêu chí — từ nhu cầu đã xác nhận trong Deep Research."
+        f"{c}div>"
+    )
+    note_new = (
+        f"<div style={q}font:11px Roboto,sans-serif;color:#8FA2C7;margin-top:5px{q}>"
+        f"{{{{ matchRankNote }}}}{c}div>"
+    )
+    if note_old in src:
+        src = src.replace(note_old, note_new, 1)
+        hits += 1
+
+    return src, hits
+
+
+
+def _patch_match_ui_extras(src: str, nl: str) -> tuple[str, int]:
+    """B: animation nút Chạy lại matching. C: icon sản phẩm theo data thật."""
+    hits = 0
+    q = chr(92) + chr(34)
+    c = "<" + chr(92) + "u002F"
+
+    # ── C. _prodBy: cache theo danh sách hiện tại, không cache vĩnh viễn ──
+    # Bug: __pmap build 1 lần; nếu build lúc bridge chưa ready thì giữ map của
+    # danh sách mock, nên tên sản phẩm thật (ZNS – …, Zalo OA – …) tra không ra
+    # và mất icon. Đổi sang so identity của mảng _PRODS() để tự làm mới.
+    prodby_old = (
+        "_prodBy(n) { if (!this.__pmap) { this.__pmap = {}; "
+        "this._PRODS().forEach((p) => { this.__pmap[p.name] = p; }); } "
+        "return this.__pmap[n] || {}; }"
+    )
+    prodby_new = (
+        "_prodBy(n) { const __list = this._PRODS(); "
+        "if (!this.__pmap || this.__pmapSrc !== __list) { this.__pmap = {}; "
+        "__list.forEach((p) => { this.__pmap[p.name] = p; }); "
+        "this.__pmapSrc = __list; } "
+        "return this.__pmap[n] || {}; }"
+    )
+    if prodby_old in src:
+        src = src.replace(prodby_old, _jsafe(prodby_new, "_prodBy"), 1)
+        hits += 1
+
+    # ── B. props cho nút đang chạy ──
+    prop_anchor = "      matchRankNote: (() => { const __zb = window.__ZB;"
+    prop_new = (
+        "      matchRunning: !!this.state.mJobId,"
+        " matchRerunPct: Math.max(0, Math.min(100, this.state.mPct || 0)),"
+        " matchRerunLabel: this.state.mJobId "
+        "? ('Đang chạy… ' + Math.max(0, Math.min(100, this.state.mPct || 0)) + '%') "
+        ": 'Chạy lại matching',"
+        " matchRerunStyle: (() => { const on = !!this.state.mJobId; "
+        "const p = Math.max(0, Math.min(100, this.state.mPct || 0)); "
+        "const base = 'margin-left:auto;display:flex;align-items:center;"
+        "justify-content:center;gap:8px;border-radius:8px;padding:7px 12px;"
+        "font:600 12px Roboto,sans-serif;min-width:178px;box-sizing:border-box;"
+        "transition:background .45s linear,border-color .28s ease,color .28s ease;'; "
+        "if (!on) return base + 'border:1px solid #0068FF;color:#0068FF;"
+        "background:#fff;cursor:pointer'; "
+        "return base + 'border:1px solid #9FC6FF;color:#0068FF;cursor:progress;"
+        "background:linear-gradient(90deg,#D3E6FF 0%,#D3E6FF ' + p + '%,"
+        "#F2F7FF ' + p + '%,#F2F7FF 100%)'; })(),"
+        " matchRerunIconStyle: 'width:13px;height:13px;' + (this.state.mJobId "
+        "? 'animation:zbSpin .9s linear infinite' : ''),"
+        "      matchRankNote: (() => { const __zb = window.__ZB;"
+    )
+    if prop_anchor in src:
+        src = src.replace(prop_anchor, _jsafe(prop_new, "matchRerunProps"), 1)
+        hits += 1
+
+    # ── B. markup nút: thay cả wrapper + icon + nhãn trong MỘT lần.
+    # Tách wrapper ra thành replace riêng thì nó ăn mất đoạn mà btn_old cần,
+    # nên phần bind icon/nhãn im lặng không khớp — gộp lại cho chắc.
+    btn_old = (
+        f"margin-left:auto;display:flex;align-items:center;gap:8px;border:"
+        f"1px solid #0068FF;color:#0068FF;border-radius:8px;padding:7px 12px;"
+        f"font:600 12px Roboto,sans-serif;cursor:pointer;"
+        f"transition:all .22s cubic-bezier(.22,1,.36,1){q}>"
+        f"<img src={q}59978971-acde-4123-8d82-0368184e0226{q} "
+        f"style={q}width:13px;height:13px{q}>"
+        f"<span sc-camel-on-click={q}{{{{ rerunMatching }}}}{q}>"
+        f"Chạy lại matching{c}span>"
+    )
+    btn_new = (
+        f"{{{{ matchRerunStyle }}}}{q}>"
+        f"<img src={q}59978971-acde-4123-8d82-0368184e0226{q} "
+        f"style={q}{{{{ matchRerunIconStyle }}}}{q}>"
+        f"<span sc-camel-on-click={q}{{{{ rerunMatching }}}}{q}>"
+        f"{{{{ matchRerunLabel }}}}{c}span>"
+    )
+    if btn_old in src:
+        src = src.replace(btn_old, btn_new, 1)
+        hits += 1
+
+    # ── B. chặn bấm trùng khi job đang chạy ──
+    guard_old = "rerunMatching: () => this._zbMatchRun(),"
+    guard_new = (
+        "rerunMatching: () => { if (this.state.mJobId) { "
+        "this._toast('Product Matching đang chạy — chờ job hiện tại xong'); return; } "
+        "this._zbMatchRun(); },"
+    )
+    if guard_old in src:
+        src = src.replace(guard_old, _jsafe(guard_new, "rerunGuard"), 1)
+        hits += 1
+
+    # ── B. lưu % tiến độ để nhãn nút đếm theo job thật ──
+    pct_old = (
+        "this._jobPct(this._zbMJid, r.progress, r.done ? 'Product Matching xong' : null); "
+    )
+    pct_new = (
+        "this.setState((st) => ({ mReal: r.progress, "
+        "mPct: Math.max(st.mPct || 0, r.progress), "
+        "mStage: r.stage || st.mStage || '' })); "
+        "this._jobPct(this._zbMJid, r.progress, r.done ? 'Product Matching xong' : null); "
+    )
+    if pct_old in src:
+        src = src.replace(pct_old, _jsafe(pct_new, "matchPct"), 1)
+        hits += 1
+
+    return src, hits
+
+
+
+def _patch_match_painpoint_ui(src: str) -> tuple[str, int]:
+    """Card phương án hiện painpoint và cơ hội thành hai khối có nhãn, trên phần
+    giải thích sản phẩm. Không có painpoint (dữ liệu cũ) thì khối tự ẩn."""
+    hits = 0
+    q = chr(92) + chr(34)
+    c = "<" + chr(92) + "u002F"
+
+    prop_old = (
+        "return { name: m.name, family: pd.family || '', desc: m.why, "
+        "score: m.score, tags: m.tags, icon: pd.iconStyle || '',"
+    )
+    prop_new = (
+        "return { name: m.name, family: pd.family || '', desc: m.why, "
+        "score: m.score, tags: m.tags, icon: pd.iconStyle || '', "
+        "pain: m.painpoint || '', opp: m.opportunity || '', "
+        "hasPain: !!m.painpoint, hasOpp: !!m.opportunity,"
+    )
+    if prop_old in src:
+        src = src.replace(prop_old, _jsafe(prop_new, "matchPainProps"), 1)
+        hits += 1
+
+    mk_old = (
+        f"<div style={q}font:12.5px/1.65 Roboto,sans-serif;color:#4d5f85;"
+        f"margin-top:10px{q}>{{{{ m.desc }}}}{c}div>"
+    )
+    mk_new = (
+        f"<sc-if value={q}{{{{ m.hasPain }}}}{q} "
+        f"hint-placeholder-val={q}{{{{ false }}}}{q}>"
+        f"<div style={q}margin-top:11px;border-left:2px solid #E8A13C;"
+        f"padding-left:10px{q}>"
+        f"<div style={q}font:600 9.5px Roboto,sans-serif;color:#E8A13C;"
+        f"letter-spacing:.05em{q}>PAINPOINT{c}div>"
+        f"<div style={q}font:12px/1.6 Roboto,sans-serif;color:#4d5f85;"
+        f"margin-top:3px{q}>{{{{ m.pain }}}}{c}div>{c}div>{c}sc-if>"
+        f"<sc-if value={q}{{{{ m.hasOpp }}}}{q} "
+        f"hint-placeholder-val={q}{{{{ false }}}}{q}>"
+        f"<div style={q}margin-top:8px;border-left:2px solid #12A150;"
+        f"padding-left:10px{q}>"
+        f"<div style={q}font:600 9.5px Roboto,sans-serif;color:#12A150;"
+        f"letter-spacing:.05em{q}>CƠ HỘI KHAI THÁC{c}div>"
+        f"<div style={q}font:12px/1.6 Roboto,sans-serif;color:#4d5f85;"
+        f"margin-top:3px{q}>{{{{ m.opp }}}}{c}div>{c}div>{c}sc-if>"
+        f"<div style={q}font:12.5px/1.65 Roboto,sans-serif;color:#4d5f85;"
+        f"margin-top:10px{q}>{{{{ m.desc }}}}{c}div>"
+    )
+    if mk_old in src:
+        src = src.replace(mk_old, mk_new, 1)
+        hits += 1
+
+    return src, hits
+
+
 def patch_prototype(html: str) -> tuple[str, PatchReport]:
     report = PatchReport()
     original = html
@@ -2719,6 +3695,39 @@ def patch_prototype(html: str) -> tuple[str, PatchReport]:
     html, hits = _patch_create_flows(html)
     _mark(report, f"createFlows({hits})", hits == 6)
 
+    html, hits = _patch_kb_upload_real(html, nl)
+    _mark(report, f"kbUploadReal({hits})", hits == 2)
+
+    html, hits = _patch_kb_live_files(html)
+    _mark(report, f"kbLiveFiles({hits})", hits == 3)
+
+    html, hits = _patch_real_deletes(html)
+    _mark(report, f"realDeletes({hits})", hits == 5)
+
+    html, hits = _patch_lib_card_deletes(html)
+    _mark(report, f"libCardDeletes({hits})", hits == 4)
+
+    html, hits = _patch_kb_new_ui(html)
+    _mark(report, f"kbNewUI({hits})", hits == 4)
+
+    html, hits = _patch_product_matching(html, nl)
+    _mark(report, f"productMatching({hits})", hits == 4)
+
+    html, hits = _patch_plan_summary(html)
+    _mark(report, f"planSummary({hits})", hits == 1)
+
+    html, hits = _patch_match_criteria(html)
+    _mark(report, f"matchCriteria({hits})", hits == 2)
+
+    html, hits = _patch_match_gaps(html)
+    _mark(report, f"matchGaps({hits})", hits == 3)
+
+    html, hits = _patch_match_ui_extras(html, nl)
+    _mark(report, f"matchUiExtras({hits})", hits == 5)
+
+    html, hits = _patch_match_painpoint_ui(html)
+    _mark(report, f"matchPainpointUI({hits})", hits == 2)
+
     html, ok = _patch_login_email(html)
     _mark(report, "loginEmail", ok)
 
@@ -2765,18 +3774,20 @@ def patch_prototype(html: str) -> tuple[str, PatchReport]:
 
 class PrototypeCache:
     def __init__(self) -> None:
-        self._key: tuple[str, int, float] | None = None
+        self._key: tuple[object, ...] | None = None
         self._html: str | None = None
         self._report: PatchReport | None = None
 
     def render(self, path: Path) -> str:
         stat = path.stat()
-        key = (str(path), stat.st_size, stat.st_mtime)
+        stamp = _bridge_stamp(path.parent)
+        key = (str(path), stat.st_size, stat.st_mtime, stamp)
         if self._key == key and self._html is not None:
             return self._html
 
         raw = path.read_text(encoding="utf-8", errors="replace")
         html, report = patch_prototype(raw)
+        html = html.replace(BRIDGE_SRC_ATTR, f'src="/zb-api-bridge.js?v={stamp}"', 1)
         self._key = key
         self._html = html
         self._report = report

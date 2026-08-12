@@ -280,39 +280,6 @@ PRODUCTS: list[dict[str, Any]] = [
         "industries": ["F&B", "Bán lẻ", "Dược phẩm", "Hàng không"],
         "positioning": "Giảm rào cản tải app, tận dụng sẵn tệp người dùng Zalo.",
     },
-    {
-        "name": "Zalo Ads",
-        "family": "Zalo Business Service",
-        "group": "Growth",
-        "description": (
-            "Quảng cáo trên Zalo theo mục tiêu: tăng người theo dõi OA, cài Mini App, tin nhắn."
-        ),
-        "packages": ["Self-serve", "Managed"],
-        "capabilities": ["Nhắm theo khu vực", "Nhắm theo nhân khẩu", "Tối ưu theo chuyển đổi"],
-        "industries": ["Bán lẻ", "F&B", "Giáo dục", "Bất động sản"],
-        "positioning": "Tiếp cận người dùng Việt Nam ngay trong ứng dụng nhắn tin phổ biến nhất.",
-    },
-    {
-        "name": "ZaloPay Gateway",
-        "family": "Zalo Business Service",
-        "group": "Payment",
-        "description": "Cổng thanh toán tích hợp trong Zalo và Mini App: ví, thẻ, chuyển khoản.",
-        "packages": ["Standard", "Enterprise"],
-        "capabilities": ["Thanh toán trong Mini App", "Hoàn tiền", "Đối soát giao dịch"],
-        "industries": ["Bán lẻ", "F&B", "Trung gian thanh toán", "Hàng không"],
-        "positioning": "Thanh toán liền mạch ngay trong luồng Zalo, không rời ứng dụng.",
-    },
-    {
-        "name": "Zalo Cloud Account",
-        "family": "Zalo Cloud",
-        "group": "Platform",
-        "description": "Tài khoản quản trị tập trung cho các dịch vụ Zalo Business: hạn mức, "
-        "khoá API, báo cáo.",
-        "packages": ["Standard"],
-        "capabilities": ["Quản lý khoá API", "Theo dõi hạn mức", "Báo cáo sử dụng"],
-        "industries": ["Ngân hàng", "Bán lẻ", "Trung gian thanh toán"],
-        "positioning": "Lớp quản trị dùng chung cho toàn bộ dịch vụ Zalo Business.",
-    },
 ]
 
 SKILLS: list[dict[str, Any]] = [

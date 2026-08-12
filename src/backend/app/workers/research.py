@@ -1,6 +1,7 @@
 from typing import Any
 
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.clock import today_context
@@ -37,6 +38,7 @@ from app.workers.research_agent import build_corpus, plan_trace, run_agent
 log = get_logger(__name__)
 
 MARKET = settings.research_market_label
+FOCUS = settings.focus_prompt_block
 
 
 EXTRACT_ATTEMPTS: tuple[tuple[float, int], ...] = ((1.0, 16_384), (0.45, 8_192))
@@ -96,6 +98,7 @@ phụ trách **thị trường {MARKET}**.
 Nhiệm vụ: đọc các nguồn được cung cấp và rút ra dữ kiện về hoạt động của doanh
 nghiệp **tại {MARKET}**.
 
+{FOCUS}
 Phạm vi — bắt buộc:
 - CHỈ lấy dữ kiện về thị trường {MARKET}. Ví dụ với "Napas": lấy thông tin Napas
   vận hành tại {MARKET} (sản phẩm, đối tác ngân hàng trong nước, số liệu giao
@@ -106,6 +109,11 @@ Phạm vi — bắt buộc:
   phần liên quan tới {MARKET}.
 - Không bịa. Mọi dữ kiện phải truy được về một nguồn trong danh sách.
 - Viết bằng tiếng Việt, mỗi dữ kiện 1–3 câu, có số liệu nếu nguồn có.
+- Nếu nguồn có, TÁCH THÀNH DỮ KIỆN RIÊNG (đây là đầu vào trực tiếp cho bước
+  Product Matching sản phẩm Zalo):
+  * hiện diện Zalo chính chủ của doanh nghiệp (OA/Mini App/ZBS Template — tên cũ ZNS);
+  * kênh & chi phí tương tác khách cuối (SMS/OTP giao dịch, tổng đài, app, loyalty);
+  * use case Zalo của ngành hoặc của đối thủ trực tiếp (ai dùng, làm gì).
 
 Trả về DUY NHẤT một JSON object:
 {{
@@ -114,9 +122,17 @@ Trả về DUY NHẤT một JSON object:
       "confidence": <0-100>, "sourceUrl": "<url>", "isOpportunity": <true|false>}}
   ],
   "profile": {{
+    "executiveSummary": "<3-5 câu tóm tắt điều hành: doanh nghiệp là ai, quy mô & vị thế, chuyển động đáng chú ý gần đây, và cơ hội mở ra cho kênh tương tác số>",
     "industry": "<ngành>", "hq": "<trụ sở tại {MARKET}>",
     "size": "<quy mô nhân sự>", "channels": ["<kênh bán/CSKH>"],
-    "techStack": ["<công nghệ>"], "marketPosition": "<vị thế tại {MARKET}>"
+    "techStack": ["<công nghệ>"], "marketPosition": "<vị thế tại {MARKET}>",
+    "zaloPresence": {{"oa": "<tên OA + trạng thái xác minh, hoặc 'không thấy'>",
+      "miniApp": "<tên Mini App hoặc 'không thấy'>",
+      "zns": "<đang dùng ZBS Template (tên cũ ZNS)? hoặc 'không rõ'>", "sourceUrl": "<url nếu có>"}},
+    "channelCosts": "<kênh giao dịch/CSKH đang dùng + quy mô/chi phí nếu nguồn có>",
+    "industryUseCases": [
+      {{"case": "<use case Zalo của ngành/đối thủ>", "sourceUrl": "<url>"}}
+    ]
   }},
   "opportunities": [
     {{"topic": "<cơ hội cho Zalo>", "summary": "<lý do>", "confidence": <0-100>}}
@@ -147,11 +163,23 @@ def build_queries(customer: Customer) -> list[str]:
     if industry:
         queries.append(f"{name} {industry} thị trường {MARKET}")
 
-    press = " OR ".join(f"site:{d}" for d in settings.research_preferred_domains[:6])
+    press = " OR ".join(f"site:{d}" for d in settings.press_domains)
     queries.append(f"{name} ({press})")
     queries.append(f"{name} khách hàng doanh nghiệp {MARKET} quy mô")
 
     return queries
+
+
+# Giới hạn thật của các cột customer_sources. Nguồn ngoài không kiểm soát được độ
+# dài — trang GitBook có thể cho title dài mấy nghìn ký tự — nên cắt tại đây.
+_SRC_LIMITS = {"name": 180, "url": 1024, "title": 512, "reason": 64}
+
+
+def _fit(value: str | None, limit: int) -> str | None:
+    if not value:
+        return None
+    text = " ".join(str(value).split())
+    return text[:limit] or None
 
 
 async def _emit_source(
@@ -166,22 +194,35 @@ async def _emit_source(
     http: int | None = None,
     reason: str | None = None,
     excerpt: str | None = None,
-) -> CustomerSource:
+) -> CustomerSource | None:
     row = CustomerSource(
         id=CustomerSource.make_id(),
         customer_id=customer_id,
         job_id=job.id,
-        name=name,
-        url=url,
-        title=title,
+        name=_fit(name, _SRC_LIMITS["name"]),
+        url=_fit(url, _SRC_LIMITS["url"]),
+        title=_fit(title, _SRC_LIMITS["title"]),
         status=status,
         http_status=http,
-        reason=reason,
+        reason=_fit(reason, _SRC_LIMITS["reason"]),
         excerpt=excerpt,
         fetched_at=now() if status == SourceStatus.OK else None,
     )
     session.add(row)
-    await session.commit()
+    try:
+        await session.commit()
+    except SQLAlchemyError as exc:
+        # Rollback rồi bỏ qua nguồn này. Không rollback thì session bị poison và
+        # mọi lệnh sau — kể cả ghi status job — đều fail, job treo ở running.
+        await session.rollback()
+        log.warning(
+            "source_insert_failed",
+            customer=customer_id,
+            job=job.id,
+            url=(url or name or "")[:160],
+            error=str(exc)[:200],
+        )
+        return None
 
     await bus.publish(
         session,
@@ -328,6 +369,19 @@ async def _research(session: AsyncSession, job: Job) -> None:
     async def note_step(label: str, progress: float) -> None:
         await step(session, job, "crawl", label, progress)
 
+    # Skill stage Research: nối vào cả vòng lập kế hoạch tìm kiếm và vòng rút
+    # dữ kiện, vì hai bước đó là nơi cách làm của đội BD thực sự có tác dụng.
+    from app.db.models.enums import SkillStage
+    from app.services.skill_prompt import log_and_build
+
+    skill_hint = await log_and_build(
+        session,
+        SkillStage.RESEARCH,
+        owner_id=job.created_by_id,
+        where="research",
+        job_id=job.id,
+    )
+
     agent = await run_agent(
         customer.name,
         customer.website,
@@ -337,6 +391,7 @@ async def _research(session: AsyncSession, job: Job) -> None:
         on_hit=note_source,
         on_step=note_step,
         admin=await _ai_config(session),
+        guidance=skill_hint,
     )
     hits = agent.hits
     trace = plan_trace(agent)
@@ -483,7 +538,7 @@ async def _research(session: AsyncSession, job: Job) -> None:
         try:
             completion = await maas.run(
                 "research.extract",
-                EXTRACT_SYSTEM,
+                EXTRACT_SYSTEM + skill_hint,
                 build_prompt(share),
                 admin=ai_config,
                 max_tokens=cap,

@@ -1,3 +1,13 @@
+"""Client gọi MaaS — bản **GreenNode Self-host** (hạ tầng AI của VNG), phơi API
+kiểu OpenAI-compatible tại MAAS_BASE_URL. Không phải API công khai của
+OpenAI/Google, nên hai điều sau là hệ quả của việc self-host:
+
+- Tên model phải khớp danh mục đang chạy trên cụm; đặt sai tên thì trả 404/400
+  chứ không tự fallback (xem TRANSIENT_STATUS ở dưới).
+- Pool của một model có thể hết worker (503 no_available_workers) khi cụm đang
+  tải nặng — đó là lý do có MAAS_FALLBACK_MODELS và MAAS_RETRY_DELAYS.
+"""
+
 import asyncio
 import base64
 import json

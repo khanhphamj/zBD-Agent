@@ -2,6 +2,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Query, Request, status
 from sqlalchemy import or_, select
+from sqlalchemy.orm import selectinload
 
 from app.api.deps import AdminUser, CurrentUser, SessionDep
 from app.core.errors import NotFoundError
@@ -27,7 +28,7 @@ async def list_products(
     status_filter: Annotated[str | None, Query(alias="status")] = None,
     detail: Annotated[bool, Query(description="Trả đủ pricing/capabilities/documents")] = False,
 ) -> dict[str, Any]:
-    stmt = select(Product)
+    stmt = select(Product).options(selectinload(Product.services))
     if group:
         stmt = stmt.where(Product.group_name == group)
     if family:
@@ -60,7 +61,9 @@ async def list_products(
 
 @router.get("/products/{product_id}", summary="Profile sản phẩm đầy đủ")
 async def get_product(product_id: str, user: CurrentUser, session: SessionDep) -> dict[str, Any]:
-    item = await session.get(Product, product_id)
+    item = await session.get(
+        Product, product_id, options=[selectinload(Product.services)]
+    )
     if item is None:
         raise NotFoundError("Sản phẩm")
     return product_detail(item)

@@ -295,6 +295,12 @@ def vn_rank(hit: SearchHit) -> float:
 
     if any(host == d or host.endswith(f".{d}") for d in settings.research_preferred_domains):
         score += 3.0
+    # Nguồn của nhóm ngành đang focus được cộng thêm — ưu tiên mềm, cộng dồn
+    # lên điểm chung chứ không loại nguồn ngành khác.
+    if settings.focus_industry and any(
+        host == d or host.endswith(f".{d}") for d in settings.focus_preferred_domains
+    ):
+        score += 1.5
     if host.endswith(".vn"):
         score += 2.5
     if host.endswith(".com.vn") or host.endswith(".gov.vn"):

@@ -212,8 +212,11 @@
         ver: s.version || 'v1.0',
         runs: 0,
         desc: s.description || '',
-        stage: toolTag(s.tools, s.stage),
-        stageRaw: s.stage || 'Research',
+        // stage phải là GIÁ TRỊ THẬT: wizard Tạo proposal lọc stage === 'Proposal',
+        // picker research lọc === 'Research'. Nhãn công cụ (trang trí chip) tách
+        // sang `tag` — trước đây đè vào stage làm skill Proposal biến mất khỏi wizard.
+        stage: s.stage || 'Research',
+        tag: toolTag(s.tools, s.stage),
         tools: s.tools || [],
         prompt: s.prompt || '',
         model: s.model || null,
@@ -414,18 +417,51 @@
 
       var priceRow = (p.pricing || []).find(function (r) { return r && (r.price || r.value); });
 
+      // Dịch vụ con — đơn vị matching; PKH card hiện accordion từ danh sách này.
+      var services = (p.services || []).map(function (s) {
+        var priceTxt = (s.pricing || [])
+          .map(function (r) { return r && r.price; })
+          .filter(Boolean)
+          .join(' · ');
+        var reqTxt = (s.requires || [])
+          .map(function (r) { return r && r.note; })
+          .filter(Boolean)
+          .join(' • ');
+        return {
+          id: s.id,
+          name: s.name,
+          solves: s.solves || s.summary || '',
+          price: priceTxt,
+          pm: s.pricingModel || '',
+          grp: s.group || '',
+          req: reqTxt
+        };
+      });
+      var prodReq = (p.requires || [])
+        .map(function (r) { return r && r.note; })
+        .filter(Boolean)
+        .join(' • ');
+
       return {
         name: p.name,
         family: p.family || 'Khác',
         group: p.group || '',
-        desc: p.description || '',
-        tags: (p.capabilities || []).length ? p.capabilities : (p.targetIndustries || []),
+        // mô tả gọn cho card — chi tiết nằm ở section dịch vụ con
+        desc: (function (d) {
+          d = d || '';
+          return d.length > 180 ? d.slice(0, 178).replace(/\s+\S*$/, '') + '…' : d;
+        })(p.description),
+        // tối đa 3 chip — tường chip cũ gây nhiễu, dịch vụ con nói thay
+        tags: ((p.capabilities || []).length ? p.capabilities : (p.targetIndustries || [])).slice(0, 3),
         pkgs: p.packages || [],
         limits: limits,
         tech: p.positioning || '',
         price: priceRow ? String(priceRow.price || priceRow.value) : '',
         iconStyle: iconStyleFor(i, p.iconUrl),
         sources: sources,
+        services: services,
+        req: prodReq,
+        pm: p.pricingModel || '',
         __id: p.id
       };
     });
@@ -525,7 +561,7 @@
           req('/directory?limit=50&includeTeams=false'),
           soft('/access-requests', { items: [] }),
           soft('/admin/users', { items: [] }),
-          req('/products?detail=true'),
+          req('/products?detail=true&status=active'),
           req('/notifications?limit=50'),
           req('/dashboard')
         ]);
@@ -661,9 +697,17 @@
 
   var JOB_LOG_EVENTS = { step: 1, source: 1, error: 1 };
 
+  // Job xong thì nạp lại cache MỘT lần: research đổi website/logo/trạng thái
+  // của khách trên server, không refresh thì UI giữ logo cũ tới khi F5.
+  var refreshedJobs = {};
+
   ZB.jobStatus = function (jobId) {
     return req('/jobs/' + jobId).then(function (j) {
       var events = j.events || [];
+      if (j.status === 'done' && !refreshedJobs[jobId]) {
+        refreshedJobs[jobId] = 1;
+        loadAll().catch(function () {});
+      }
       return {
         ok: true,
         status: j.status,
@@ -690,6 +734,8 @@
 
   ZB.customerDetail = function (id) {
     return req('/customers/' + id).then(function (c) {
+      // Lớp augmentation (breadcrumb dịch vụ ở tab Matching) đọc từ đây.
+      ZB.lastCust = c;
       return { ok: true, customer: c };
     }, function (e) {
       return { ok: false, code: e.code, message: e.message };
@@ -1132,6 +1178,362 @@
       });
       input.click();
     });
+  };
+
+  // ── Knowledge Base: tài liệu thật ────────────────────────────────────────
+  // Prototype dùng uploader mô phỏng (pool tên file cứng). Các hàm dưới đây nối
+  // thẳng vào POST /knowledge-bases/{id}/files để file thật vào MinIO + DB.
+
+  ZB.KB_EXTS = ['pdf', 'docx', 'xlsx', 'pptx'];
+  ZB.KB_MAX_MB = 50;
+  ZB.KB_ACCEPT = '.pdf,.docx,.xlsx,.pptx';
+
+  ZB.kbFiles = {};
+  var kbFilesBusy = {};
+
+  function mapKbFiles(res) {
+    return (res.items || []).map(function (f) {
+      var mb = (f.sizeBytes || 0) / 1048576;
+      return [
+        f.name,
+        (f.ext || '').toUpperCase(),
+        mb.toFixed(1).replace('.', ',') + ' MB',
+        (f.uploadedBy && (f.uploadedBy.handle || f.uploadedBy.name)) || '',
+        f.id,
+        f.status || ''
+      ];
+    });
+  }
+
+  ZB.loadKbFiles = function (kbId) {
+    if (!kbId) return Promise.resolve([]);
+    if (ZB.kbFiles[kbId]) return Promise.resolve(ZB.kbFiles[kbId]);
+    if (kbFilesBusy[kbId]) return Promise.resolve([]);
+    kbFilesBusy[kbId] = true;
+    return req('/knowledge-bases/' + kbId + '/files')
+      .then(function (r) {
+        kbFilesBusy[kbId] = false;
+        ZB.kbFiles[kbId] = mapKbFiles(r);
+        emit();
+        return ZB.kbFiles[kbId];
+      })
+      .catch(function () {
+        kbFilesBusy[kbId] = false;
+        ZB.kbFiles[kbId] = [];
+        return [];
+      });
+  };
+
+  // Trả về null nếu file hợp lệ, ngược lại là lý do từ chối (tiếng Việt, để UI hiện).
+  ZB.checkKbFile = function (file) {
+    var name = (file && file.name) || '';
+    var ext = name.indexOf('.') > -1 ? name.split('.').pop().toLowerCase() : '';
+    if (ZB.KB_EXTS.indexOf(ext) < 0) {
+      return 'Định dạng .' + (ext || '?')
+        + ' không được hỗ trợ — chỉ nhận PDF, DOCX, XLSX, PPTX.';
+    }
+    var mb = ((file && file.size) || 0) / 1048576;
+    if (mb > ZB.KB_MAX_MB) {
+      return 'Dung lượng ' + mb.toFixed(1).replace('.', ',') + ' MB vượt giới hạn '
+        + ZB.KB_MAX_MB + ' MB — tách nhỏ file rồi tải lại.';
+    }
+    return null;
+  };
+
+  // Mở hộp thoại chọn file thật. Không upload — chỉ trả về danh sách File.
+  ZB.pickKbFiles = function () {
+    return new Promise(function (resolve) {
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.accept = ZB.KB_ACCEPT;
+      input.multiple = true;
+      input.style.display = 'none';
+      document.body.appendChild(input);
+      input.addEventListener('change', function () {
+        var picked = [];
+        var list = input.files || [];
+        for (var i = 0; i < list.length; i++) picked.push(list[i]);
+        if (input.parentNode) document.body.removeChild(input);
+        if (!picked.length) return resolve({ ok: false, cancelled: true, files: [] });
+        resolve({ ok: true, files: picked });
+      });
+      input.addEventListener('cancel', function () {
+        if (input.parentNode) document.body.removeChild(input);
+        resolve({ ok: false, cancelled: true, files: [] });
+      });
+      input.click();
+    });
+  };
+
+  ZB.uploadKbFiles = function (kbId, files) {
+    if (!kbId) return Promise.resolve({ ok: false, message: 'Thiếu id Knowledge Base' });
+    if (!files || !files.length) {
+      return Promise.resolve({ ok: false, message: 'Chưa chọn file' });
+    }
+    var form = new FormData();
+    for (var i = 0; i < files.length; i++) form.append('files', files[i], files[i].name);
+    var headers = {};
+    var t = token();
+    if (t) headers.Authorization = 'Bearer ' + t;
+    return fetch(API + '/knowledge-bases/' + kbId + '/files', {
+      method: 'POST', headers: headers, body: form
+    })
+      .then(function (r) {
+        return r.text().then(function (txt) {
+          var data = null;
+          try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
+          if (!r.ok) {
+            return {
+              ok: false,
+              message: (data && data.error && data.error.message) || ('HTTP ' + r.status),
+              code: data && data.error && data.error.code
+            };
+          }
+          var items = (data && data.results) || [];
+          var okCount = (data && data.okCount) || 0;
+          delete ZB.kbFiles[kbId];
+          return ZB.loadKbFiles(kbId).then(function () {
+            return refresh({
+              ok: okCount > 0,
+              created: okCount,
+              failed: (data && data.failedCount) || 0,
+              items: items,
+              message: okCount ? null : ((items[0] && items[0].message) || 'Không lưu được file')
+            });
+          });
+        });
+      })
+      .catch(function (e) { return { ok: false, message: e.message }; });
+  };
+
+  // ── Xoá thật (prototype chỉ đổi state cục bộ nên reload là thấy lại) ─────
+
+  function del(path, after) {
+    return req(path, { method: 'DELETE' })
+      .then(function () {
+        if (after) after();
+        return refresh({ ok: true });
+      })
+      .catch(fail);
+  }
+
+  ZB.deleteSkill = function (id) {
+    if (!id) return Promise.resolve({ ok: false, message: 'Thiếu id skill' });
+    return del('/skills/' + id, function () { delete ZB.skillVersions[id]; });
+  };
+
+  ZB.deleteKb = function (id) {
+    if (!id) return Promise.resolve({ ok: false, message: 'Thiếu id Knowledge Base' });
+    return del('/knowledge-bases/' + id, function () { delete ZB.kbFiles[id]; });
+  };
+
+  ZB.deleteKbFile = function (kbId, fileId) {
+    if (!kbId || !fileId) return Promise.resolve({ ok: false, message: 'Thiếu id tài liệu' });
+    return del('/knowledge-bases/' + kbId + '/files/' + fileId, function () {
+      delete ZB.kbFiles[kbId];
+    });
+  };
+
+  ZB.deleteTemplate = function (id) {
+    if (!id) return Promise.resolve({ ok: false, message: 'Thiếu id template' });
+    return del('/templates/' + id, function () { delete ZB.templateVersions[id]; });
+  };
+
+  ZB.deleteProposal = function (id) {
+    if (!id) return Promise.resolve({ ok: false, message: 'Thiếu id proposal' });
+    return del('/proposals/' + id);
+  };
+
+  ZB.deleteCustomer = function (id) {
+    if (!id) return Promise.resolve({ ok: false, message: 'Thiếu id khách hàng' });
+    return del('/customers/' + id);
+  };
+
+  // Xoá nhiều proposal theo tên hiển thị — trả về số xoá được / lỗi đầu tiên.
+  ZB.deleteProposalsByTitle = function (titles) {
+    var list = (ZB.proposals || []);
+    var ids = (titles || []).map(function (t) {
+      var hit = list.filter(function (p) { return p.title === t; })[0];
+      return hit && hit.__id;
+    }).filter(Boolean);
+    if (!ids.length) return Promise.resolve({ ok: false, message: 'Không tìm thấy proposal' });
+
+    var okCount = 0;
+    var firstErr = null;
+    var chain = Promise.resolve();
+    ids.forEach(function (id) {
+      chain = chain.then(function () {
+        return req('/proposals/' + id, { method: 'DELETE' })
+          .then(function () { okCount += 1; })
+          .catch(function (e) { if (!firstErr) firstErr = e.message; });
+      });
+    });
+    return chain.then(function () {
+      return refresh({ ok: okCount > 0, deleted: okCount, message: firstErr });
+    });
+  };
+
+  // Thẻ trong thư viện chỉ biết tên (libGone dùng kind::name làm khoá), nên phải
+  // tra ngược ra id thật từ danh sách live trước khi gọi DELETE.
+  ZB.deleteLibItem = function (kind, name) {
+    var lists = { skill: ZB.skills, kb: ZB.kbs, tpl: ZB.tpls, prod: ZB.prods };
+    var paths = {
+      skill: '/skills/', kb: '/knowledge-bases/',
+      tpl: '/templates/', prod: '/products/'
+    };
+    var path = paths[kind];
+    if (!path) return Promise.resolve({ ok: false, message: 'không hỗ trợ loại ' + kind });
+
+    var hit = (lists[kind] || []).filter(function (x) { return x.name === name; })[0];
+    if (!hit || !hit.__id) {
+      return Promise.resolve({ ok: false, message: 'không tìm thấy “' + name + '” trong dữ liệu live' });
+    }
+    return del(path + hit.__id, function () {
+      if (kind === 'skill') delete ZB.skillVersions[hit.__id];
+      if (kind === 'kb') delete ZB.kbFiles[hit.__id];
+      if (kind === 'tpl') delete ZB.templateVersions[hit.__id];
+    });
+  };
+
+  // Hàng khách hàng dùng c.key, vốn chính là customer id.
+  ZB.deleteCustomers = function (keys) {
+    var ids = (keys || []).filter(Boolean);
+    if (!ids.length) return Promise.resolve({ ok: false, message: 'chưa chọn khách hàng' });
+
+    var okCount = 0;
+    var firstErr = null;
+    var chain = Promise.resolve();
+    ids.forEach(function (id) {
+      chain = chain.then(function () {
+        return req('/customers/' + id, { method: 'DELETE' })
+          .then(function () { okCount += 1; })
+          .catch(function (e) { if (!firstErr) firstErr = e.message; });
+      });
+    });
+    return chain.then(function () {
+      return refresh({ ok: okCount > 0, deleted: okCount, message: firstErr });
+    });
+  };
+
+  // ── Product Matching: phương án thật từ worker LLM ──────────────────────
+  // Prototype dùng _MATCH() cứng. Các hàm dưới nối vào job matching thật và
+  // GET /customers/{id}/solutions, rồi map sang đúng shape prototype đang đọc.
+
+  ZB.solutions = {};
+  var solBusy = {};
+
+  function planRole(score) { return score >= 80 ? 'Chính' : 'Bổ trợ'; }
+
+  function mapSolutions(res) {
+    var rows = (res.items || []).filter(function (s) { return s.product; });
+    var ranked = rows.slice().sort(function (a, b) {
+      return (b.fitScore || 0) - (a.fitScore || 0);
+    });
+
+    var primary = ranked.map(function (s) {
+      var tags = [];
+      if (s.package) tags.push(s.package);
+      if (s.expectedImpact) tags.push(s.expectedImpact);
+      if (s.pricingNote) tags.push(s.pricingNote);
+      return {
+        name: s.product.name,
+        score: Math.round(s.fitScore || 0),
+        why: s.rationale || s.title || '',
+        tags: tags.slice(0, 3),
+        painpoint: s.painpoint || '',
+        opportunity: s.opportunity || '',
+        __sid: s.id,
+        __selected: !!s.selected,
+        __evi: (s.evidence || []).map(function (e) { return e && e.id; }).filter(Boolean)
+      };
+    });
+
+    // “extra” = sản phẩm trong danh mục nhưng worker không đề xuất -> chưa có điểm
+    var seen = {};
+    primary.forEach(function (p) { seen[p.name] = 1; });
+    var extra = (ZB.prods || [])
+      .filter(function (p) { return !seen[p.name]; })
+      .map(function (p) {
+        return { name: p.name, score: 0, why: p.desc || p.sub || '' };
+      });
+
+    // plan: ưu tiên những phương án đã chọn trong DB; chưa chọn gì thì lấy các
+    // phương án đạt ngưỡng để màn hình có nội dung ngay sau khi chạy.
+    var chosen = ranked.filter(function (s) { return s.selected; });
+    if (!chosen.length) {
+      chosen = ranked.filter(function (s) { return (s.fitScore || 0) >= 50; });
+    }
+    var plan = chosen.map(function (s) {
+      return [s.product.name, planRole(s.fitScore || 0)];
+    });
+
+    return { primary: primary, extra: extra, plan: plan, raw: rows };
+  }
+
+  ZB.loadSolutions = function (customerId) {
+    if (!customerId) return Promise.resolve(null);
+    if (ZB.solutions[customerId]) return Promise.resolve(ZB.solutions[customerId]);
+    if (solBusy[customerId]) return Promise.resolve(null);
+    solBusy[customerId] = true;
+    return req('/customers/' + customerId + '/solutions')
+      .then(function (r) {
+        solBusy[customerId] = false;
+        ZB.solutions[customerId] = mapSolutions(r);
+        emit();
+        return ZB.solutions[customerId];
+      })
+      .catch(function () {
+        solBusy[customerId] = false;
+        ZB.solutions[customerId] = { primary: [], extra: [], plan: [], raw: [] };
+        return ZB.solutions[customerId];
+      });
+  };
+
+  ZB.reloadSolutions = function (customerId) {
+    delete ZB.solutions[customerId];
+    return ZB.loadSolutions(customerId);
+  };
+
+  ZB.runProductMatching = function (customerId) {
+    if (!customerId) return Promise.resolve({ ok: false, message: 'Thiếu id khách hàng' });
+    return req('/customers/' + customerId + '/product-matching', { method: 'POST' })
+      .then(function (r) { return { ok: true, jobId: r.jobId }; }, fail);
+  };
+
+  ZB.setSolutionInPlan = function (customerId, name, inPlan) {
+    var cache = ZB.solutions[customerId];
+    if (!cache) return Promise.resolve({ ok: false, message: 'chưa tải phương án' });
+    var rows = cache.raw || [];
+    var hit = rows.filter(function (s) {
+      return s.product && s.product.name === name;
+    })[0];
+    if (!hit) {
+      return Promise.resolve({ ok: false, message: 'không có phương án nào cho ' + name });
+    }
+
+    function pick(id, on) {
+      return req('/customers/' + customerId + '/solutions/' + id
+        + '/select?selected=' + (on ? 'true' : 'false'), { method: 'POST' });
+    }
+
+    // Lần đầu người dùng chỉnh: ghi cứng phần plan đang hiển thị (vốn suy ra từ
+    // ngưỡng điểm) để `selected` trong DB trở thành nguồn sự thật duy nhất.
+    var chain = Promise.resolve();
+    if (!rows.some(function (s) { return s.selected; })) {
+      var implicit = {};
+      (cache.plan || []).forEach(function (p) { implicit[p[0]] = 1; });
+      rows.filter(function (s) {
+        return s.product && implicit[s.product.name] && s.product.name !== name;
+      }).forEach(function (s) {
+        chain = chain.then(function () { return pick(s.id, true).catch(function () {}); });
+      });
+    }
+
+    return chain
+      .then(function () { return pick(hit.id, inPlan); })
+      .then(function () { return ZB.reloadSolutions(customerId); })
+      .then(function () { return { ok: true }; })
+      .catch(fail);
   };
 
   ZB.exportSkillUrl = function (id) { return API + '/skills/' + id + '/export'; };

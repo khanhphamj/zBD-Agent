@@ -174,6 +174,8 @@ class ResearchDepth(StrEnum):
 class SkillStage(StrEnum):
     RESEARCH = "Research"
     PROFILE = "Hồ sơ"
-    MATCHING = "Phương án"
+    # Đổi "Phương án" -> "Matching" (01/08/2026) cho thống nhất với nhãn stage
+    # tiếng Anh trên UI (Research/Proposal). Data migrate cùng đợt.
+    MATCHING = "Matching"
     PROPOSAL = "Proposal"
     REVIEW = "Kiểm duyệt"

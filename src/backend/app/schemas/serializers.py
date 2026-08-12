@@ -220,6 +220,8 @@ def solution(item: CustomerSolution) -> dict[str, Any]:
     return {
         "id": item.id,
         "title": item.title,
+        "painpoint": item.painpoint,
+        "opportunity": item.opportunity,
         "rationale": item.rationale,
         "fitScore": round(item.fit_score, 1),
         "expectedImpact": item.expected_impact,
@@ -227,6 +229,16 @@ def solution(item: CustomerSolution) -> dict[str, Any]:
         "package": item.package,
         "selected": item.selected,
         "evidence": item.evidence,
+        "serviceMatches": item.service_matches,
+        "service": (
+            {
+                "id": item.service.id,
+                "name": item.service.name,
+                "requires": item.service.requires,
+            }
+            if item.service
+            else None
+        ),
         "product": (
             {
                 "id": item.product.id,
@@ -274,6 +286,29 @@ def product_detail(item: Product) -> dict[str, Any]:
         "pricing": item.pricing,
         "documents": item.documents,
         "capabilities": item.capabilities,
+        "pricingModel": item.pricing_model,
+        "requires": item.requires,
+        # Chỉ serialize khi quan hệ đã được nạp sẵn (selectinload ở endpoint) —
+        # truy cập lazy trong async sẽ nổ MissingGreenlet; call site không nạp
+        # (PATCH/crawl) thì nhận [] là đủ.
+        "services": [
+            {
+                "id": s.id,
+                "name": s.name,
+                "summary": s.summary,
+                "solves": s.solves,
+                "signals": s.signals,
+                "capabilities": s.capabilities,
+                "pricing": s.pricing_ref,
+                "pricingModel": s.pricing_model,
+                "requires": s.requires,
+                "group": s.group_name,
+                "sourceUrl": s.source_url,
+            }
+            for s in sorted(
+                item.__dict__.get("services") or [], key=lambda x: x.sort_order
+            )
+        ],
         "targetIndustries": item.target_industries,
         "sourceUrl": item.source_url,
         "lastCrawledAt": item.last_crawled_at,

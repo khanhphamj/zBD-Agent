@@ -77,6 +77,10 @@ class Settings(BaseSettings):
     email_sandbox_to: str = ""
 
     ai_platform_api_key: str = ""
+    # MaaS = GreenNode Self-host (hạ tầng AI của VNG) — không phải API công khai của OpenAI/Google.
+    # Vì là cụm self-host: tên model phải khớp danh mục cụm đang chạy, và pool có
+    # thể hết worker (503 no_available_workers) -> maas_fallback_models +
+    # maas_retry_delays bên dưới là để đỡ đúng trường hợp đó.
     maas_base_url: str = "https://maas-llm-aiplatform-hcm.api.vngcloud.vn/v1"
     maas_reasoning_model: str = "z-ai/glm-5.2"
     maas_vision_model: str = "google/gemma-4-31b-it"
@@ -103,6 +107,43 @@ class Settings(BaseSettings):
     research_market: str = "VN"
     research_locale: str = "vi"
     research_market_label: str = "Việt Nam"
+
+    # ── Nhóm ngành đang tập trung ────────────────────────────────────────────
+    # ƯU TIÊN MỀM, không phải bộ lọc: khách ngoài ngành vẫn chạy research và
+    # matching bình thường. Focus chỉ tác động 3 chỗ: bối cảnh thêm vào prompt,
+    # điểm cộng khi xếp hạng nguồn, và 3/6 slot của truy vấn site:.
+    # Đặt focus_industry="" là tắt hẳn, mọi ngành về lại trung tính.
+    focus_industry: str = "BFSI"
+    focus_industry_label: str = (
+        "BFSI — ngân hàng, tài chính tiêu dùng, bảo hiểm, chứng khoán, "
+        "trung gian thanh toán / ví điện tử, fintech"
+    )
+    focus_industry_brief: str = """\
+- Tuân thủ là điều kiện tiên quyết, không phải điểm cộng: xác thực eKYC / sinh
+  trắc học, hạn mức giao dịch, lưu trữ và bảo mật dữ liệu khách hàng theo quy
+  định của Ngân hàng Nhà nước. Nếu một đề xuất phụ thuộc điều kiện tuân thủ thì
+  phải nói rõ, đừng để người đọc tự suy ra.
+- Use case đặc thù đáng tìm và đáng đề xuất: thông báo biến động số dư và xác
+  nhận giao dịch, OTP / xác thực, nhắc kỳ hạn và nhắc nợ, mở tài khoản và
+  onboarding trực tuyến, tra cứu hạn mức / khoản vay, chăm sóc và thu hồi nợ sớm.
+- Số liệu nên bắt khi có: quy mô tệp khách hàng, số phòng giao dịch / điểm bán,
+  sản lượng tin nhắn hoặc giao dịch mỗi tháng, tỷ lệ số hoá theo kênh.
+- Các phân khúc trong ngành khác nhau rõ rệt — ngân hàng, tài chính tiêu dùng,
+  bảo hiểm, chứng khoán, trung gian thanh toán. Không gộp chung, vì nhu cầu và
+  rào cản triển khai của từng phân khúc khác nhau."""
+    focus_preferred_domains: CsvList = Field(
+        default_factory=lambda: [
+            "sbv.gov.vn",
+            "vnba.org.vn",
+            "thitruongtaichinhtiente.vn",
+            "tinnhanhchungkhoan.vn",
+            "iav.vn",
+            "fiingroup.vn",
+            "napas.com.vn",
+        ]
+    )
+    # Số slot mà domain focus được chiếm trong truy vấn site: (tổng 6 slot).
+    focus_press_slots: int = 3
 
     research_preferred_domains: CsvList = Field(
         default_factory=lambda: [
@@ -209,6 +250,33 @@ class Settings(BaseSettings):
     @classmethod
     def _lower_emails(cls, v: list[str]) -> list[str]:
         return [item.lower() for item in v]
+
+    @property
+    def press_domains(self) -> list[str]:
+        """Domain cho truy vấn `site:` khi tìm báo chí. Domain của nhóm ngành đang
+        focus được xếp trước, phần còn lại lấy từ danh sách chung — tổng vẫn 6 để
+        query không quá dài. Không focus ngành nào thì trả về đúng 6 domain chung."""
+        focus = (
+            self.focus_preferred_domains[: self.focus_press_slots]
+            if self.focus_industry
+            else []
+        )
+        rest = [d for d in self.research_preferred_domains if d not in focus]
+        return focus + rest[: max(0, 6 - len(focus))]
+
+    @property
+    def focus_prompt_block(self) -> str:
+        """Khối bối cảnh nhóm ngành chèn vào prompt. Rỗng khi không focus ngành nào,
+        nên prompt trở lại đúng như trước."""
+        if not self.focus_industry:
+            return ""
+        return (
+            f"TRỌNG TÂM NGÀNH — {self.focus_industry_label}\n\n"
+            "Đây là ưu tiên của đội, KHÔNG phải bộ lọc. Nếu doanh nghiệp đang xử lý "
+            "không thuộc nhóm ngành này thì bỏ qua toàn bộ phần dưới và làm việc "
+            "bình thường. Nếu có thuộc, chú ý thêm:\n"
+            f"{self.focus_industry_brief}\n"
+        )
 
     @property
     def otp_bypass_active(self) -> bool:

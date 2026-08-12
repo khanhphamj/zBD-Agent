@@ -14,7 +14,7 @@ from app.core.security import now
 from app.core.text import truncate
 from app.db.models.customer import Customer, CustomerFact, CustomerSolution
 from app.db.models.job import Job
-from app.db.models.product import Product
+from app.db.models.product import Product, ProductService
 from app.integrations.maas import MaasError, maas
 from app.integrations.search import search_client
 from app.workers.base import JobCancelled, check_cancel, claim, fail, finish, step
@@ -22,39 +22,129 @@ from app.workers.base import JobCancelled, check_cancel, claim, fail, finish, st
 log = get_logger(__name__)
 
 MARKET = settings.research_market_label
+FOCUS = settings.focus_prompt_block
 
 MATCH_SYSTEM = f"""\
 Bạn là Solution Consultant của Zalo, phụ trách thị trường {MARKET}.
 
-Nhiệm vụ: đối chiếu dữ kiện về doanh nghiệp với danh mục sản phẩm Zalo và đề
-xuất các phương án phù hợp.
+Nhiệm vụ: đi từ dữ kiện Deep Research -> tìm painpoint, cơ hội và tiềm năng
+khai thác của doanh nghiệp -> rồi mới chọn sản phẩm Zalo giải quyết được điều đó.
 
+Trình tự bắt buộc, không đảo ngược:
+1. Đọc DỮ KIỆN và nhận diện painpoint / cơ hội: doanh nghiệp đang tắc ở đâu,
+   tốn kém ở đâu, đang bỏ ngỏ cơ hội nào, đã có sẵn nền tảng gì để khai thác
+   thêm. Dữ kiện gắn CƠ HỘI là gợi ý mạnh nhưng không phải danh sách đóng —
+   painpoint có thể suy ra từ nhiều dữ kiện ghép lại.
+2. Với mỗi painpoint/cơ hội đáng theo, chọn DỊCH VỤ CON trong DANH MỤC giải
+   quyết được nó — mỗi sản phẩm lớn gồm nhiều dịch vụ con, từng dịch vụ ghi
+   rõ GIẢI QUYẾT gì và TÍN HIỆU nhu cầu nào. Không có dịch vụ nào giải quyết
+   được thì bỏ painpoint đó — đừng nhồi cho đủ số lượng.
+
+Về ngành: sản phẩm Zalo đều có thể áp dụng cho nhiều ngành. KHÔNG chọn sản phẩm
+theo ngành của doanh nghiệp, và KHÔNG loại sản phẩm chỉ vì mục “Ngành phù hợp”
+của nó không có ngành này — mục đó chỉ liệt kê ví dụ đã triển khai, không phải
+giới hạn. Căn cứ duy nhất là painpoint có khớp năng lực sản phẩm hay không.
+
+{FOCUS}
 Quy tắc:
-- Chỉ đề xuất sản phẩm có trong DANH MỤC. Không bịa sản phẩm.
+- Chỉ đề xuất dịch vụ/sản phẩm có trong DANH MỤC. Không bịa.
+- MỖI SẢN PHẨM xuất hiện TỐI ĐA MỘT LẦN trong "solutions". Sản phẩm đáp ứng
+  nhiều painpoint thì thêm nhiều phần tử vào "services" của nó — mỗi dịch vụ
+  một painpoint/cơ hội/lý do riêng. KHÔNG tách thành nhiều phương án trùng
+  sản phẩm.
+- `serviceId`: id dịch vụ con (svc_...) khớp painpoint nhất của từng mục trong
+  "services". Nhu cầu phủ toàn sản phẩm mà không dịch vụ con nào khớp thì để
+  serviceId chuỗi rỗng.
 - Mỗi phương án phải nêu rõ dựa trên dữ kiện nào (dùng id dữ kiện).
-- `fitScore` 0-100: mức phù hợp thực tế, không phải mức mong muốn bán.
-- `package` chỉ được chọn trong danh sách gói của chính sản phẩm đó.
+- `painpoint`: nói đúng cái khách đang vướng hoặc đang bỏ ngỏ, đọc ra từ dữ kiện.
+  Không viết chung chung kiểu “cần chuyển đổi số” — phải cụ thể tới mức người
+  bán đọc là biết mở đầu cuộc nói chuyện thế nào.
+- `opportunity`: cơ hội/tiềm năng khai thác được nếu giải quyết painpoint đó.
+- `fitScore` 0-100: mức khớp giữa painpoint và năng lực sản phẩm, không phải
+  mức mong muốn bán. Painpoint mờ nhạt thì điểm phải thấp.
+- `package` chỉ được chọn trong danh sách Gói của SẢN PHẨM CHA chứa dịch vụ đó.
 - `pricingNote`: **chỉ ghi khi DANH MỤC có mục Giá cho sản phẩm đó.** Danh mục
   không có giá thì để chuỗi rỗng — tuyệt đối không suy đoán con số, vì ghi chú này
   đi thẳng vào proposal gửi khách.
+- Dòng ĐIỀU KIỆN trong DANH MỤC là điều kiện tiên quyết, không phải tùy chọn
+  (ví dụ: ZBS Template Message cần Zalo OA gói Tăng trưởng hoặc Toàn diện, sau
+  đó mới tính đơn giá mỗi tin). Đề xuất dịch vụ có ĐIỀU KIỆN thì `rationale`
+  hoặc `pricingNote` phải nhắc điều kiện đó — người bán cần biết phải bán kèm
+  gì; không được đề xuất như thể dùng độc lập được ngay.
 - Bối cảnh {MARKET}: cân nhắc hành vi người dùng Zalo trong nước, quy định
   trong nước, và kênh phân phối nội địa.
 - Tiếng Việt, ngắn gọn.
 
-Trả về DUY NHẤT JSON:
-{{"solutions":[{{"productId":"<prd_...>","title":"<tên phương án>",
-   "rationale":"<vì sao phù hợp, 1-3 câu>","fitScore":<0-100>,
-   "expectedImpact":"<kết quả kỳ vọng>","package":"<gói đề xuất>",
-   "pricingNote":"<ghi chú chi phí nếu có>",
-   "evidence":[{{"kind":"fact","id":"<f_...>"}}]}}]}}
+Trả về DUY NHẤT JSON — MỖI SẢN PHẨM CHỈ MỘT PHẦN TỬ trong "solutions"; mọi
+dịch vụ khớp của sản phẩm đó nằm trong mảng "services" của chính nó:
+{{"solutions":[{{"productId":"<prd_...>",
+   "title":"<tên phương án chung cho sản phẩm>",
+   "fitScore":<0-100 — bằng điểm của dịch vụ khớp nhất>,
+   "services":[{{"serviceId":"<svc_...>",
+      "painpoint":"<painpoint/nhu cầu cụ thể đọc ra từ dữ kiện>",
+      "opportunity":"<cơ hội hoặc tiềm năng khai thác được>",
+      "rationale":"<dịch vụ giải quyết painpoint đó thế nào, 1-3 câu>",
+      "fitScore":<0-100>,
+      "expectedImpact":"<kết quả kỳ vọng>","package":"<gói đề xuất>",
+      "pricingNote":"<ghi chú chi phí nếu có>",
+      "evidence":[{{"kind":"fact","id":"<f_...>"}}]}}]}}]}}
 """
-
 
 def _price_line(entry: Any) -> str:
     if not isinstance(entry, dict):
         return str(entry)
     parts = [str(entry.get(k)) for k in ("package", "price", "note") if entry.get(k)]
     return " ".join(parts)
+
+
+def _fmt_requires(requires: list[dict[str, Any]] | None) -> str:
+    """Ghép danh sách điều kiện tiên quyết thành một dòng cho catalogue."""
+    parts: list[str] = []
+    for r in requires or []:
+        if not isinstance(r, dict):
+            continue
+        note = str(r.get("note") or "").strip()
+        if not note:
+            ref = str(r.get("ref") or "")
+            pkgs = [str(x) for x in (r.get("packages") or [])]
+            note = f"cần {ref}" + (f" (gói {', '.join(pkgs)})" if pkgs else "")
+        if r.get("optional"):
+            note += " (tùy chọn)"
+        parts.append(note)
+    return " • ".join(parts)
+
+
+def _product_requires(p: Product) -> str:
+    req = _fmt_requires(getattr(p, "requires", None))
+    if not req:
+        return ""
+    return f"\n      ĐIỀU KIỆN (áp dụng cho mọi dịch vụ bên dưới): {req}"
+
+
+def _service_lines(services: list["ProductService"]) -> str:
+    """Khối DỊCH VỤ CON nối vào sau mỗi sản phẩm trong catalogue.
+
+    Mỗi dòng là một đơn vị match được: solves/signals viết bằng ngôn ngữ
+    painpoint nên LLM đối chiếu thẳng với dữ kiện, không phải suy từ mô tả
+    tính năng chung chung của sản phẩm lớn.
+    """
+    if not services:
+        return ""
+    lines = ["      DỊCH VỤ CON (đơn vị để match — dùng id svc_... này):"]
+    for s in services:
+        lines.append(f"      * [{s.id}] {s.name}")
+        if s.solves:
+            lines.append(f"          GIẢI QUYẾT: {truncate(s.solves, 280)}")
+        if s.signals:
+            lines.append(f"          TÍN HIỆU NHU CẦU: {', '.join(s.signals[:8])}")
+        if s.pricing_ref:
+            priced = [x for x in (_price_line(row) for row in s.pricing_ref) if x]
+            if priced:
+                lines.append(f"          GIÁ: {' | '.join(priced)}")
+        req = _fmt_requires(getattr(s, "requires", None))
+        if req:
+            lines.append(f"          ĐIỀU KIỆN: {req}")
+    return "\n" + "\n".join(lines)
 
 
 def _catalogue_entry(p: Product) -> str:
@@ -146,6 +236,22 @@ async def _match(session: AsyncSession, job: Job) -> None:
         await fail(session, job, "MATCHING_FAILED", "Danh mục sản phẩm đang trống.")
         return
 
+    # Dịch vụ con — đơn vị matching thật sự. Sản phẩm lớn chỉ là ngữ cảnh pitch.
+    services = list(
+        (
+            await session.execute(
+                select(ProductService)
+                .where(ProductService.status == "active")
+                .order_by(ProductService.product_id, ProductService.sort_order)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    svc_by_product: dict[str, list[ProductService]] = {}
+    for svc in services:
+        svc_by_product.setdefault(svc.product_id, []).append(svc)
+
     await check_cancel(session, job)
     await step(session, job, "match", "Đang khớp sản phẩm với nhu cầu", 0.55)
 
@@ -161,18 +267,50 @@ async def _match(session: AsyncSession, job: Job) -> None:
             f"{', CƠ HỘI' if f.is_opportunity else ''}) {truncate(f.summary, 240)}"
             for f in facts
         )
-        + "\n\nDANH MỤC SẢN PHẨM:\n"
-        + "\n".join(_catalogue_entry(p) for p in products)
+        + "\n\nDANH MỤC SẢN PHẨM (mỗi sản phẩm liệt kê DỊCH VỤ CON — match theo dịch vụ con):\n"
+        + "\n".join(
+            _catalogue_entry(p)
+            + _product_requires(p)
+            + _service_lines(svc_by_product.get(p.id, []))
+            for p in products
+        )
     )
 
     try:
-        completion = await maas.run("matching.solutions", MATCH_SYSTEM, prompt)
+        # Skill stage Phương án (MATCHING) — cách đội BD muốn chấm và ưu tiên.
+        from app.db.models.enums import SkillStage
+        from app.services.skill_prompt import log_and_build
+
+        skill_hint = await log_and_build(
+            session,
+            SkillStage.MATCHING,
+            owner_id=job.created_by_id,
+            where="matching",
+            job_id=job.id,
+        )
+        completion = await maas.run(
+            "matching.solutions", MATCH_SYSTEM + skill_hint, prompt
+        )
         parsed = completion.as_json()
     except MaasError as exc:
         await fail(session, job, "MATCHING_FAILED", f"Dịch vụ AI không phản hồi: {exc}"[:280])
         return
 
-    entries = (parsed or {}).get("solutions") if isinstance(parsed, dict) else None
+    # Model có thể trả {"solutions":[...]} đúng như yêu cầu, hoặc trả thẳng
+    # mảng [...] (hay bỏ vào khoá khác). Nội dung vẫn dùng được nên nhận cả,
+    # thay vì để job chết chỉ vì cái vỏ bọc.
+    if isinstance(parsed, dict):
+        entries = parsed.get("solutions")
+        if not isinstance(entries, list):
+            # một số model gói dưới khoá khác; lấy mảng đầu tiên tìm được
+            entries = next(
+                (v for v in parsed.values() if isinstance(v, list) and v),
+                None,
+            )
+    elif isinstance(parsed, list):
+        entries = parsed
+    else:
+        entries = None
     if not entries:
         await fail(session, job, "MATCHING_FAILED", "Model không trả về phương án nào.")
         return
@@ -181,6 +319,7 @@ async def _match(session: AsyncSession, job: Job) -> None:
     await step(session, job, "save", "Đang lưu phương án", 0.85)
 
     valid_ids = {p.id for p in products}
+    svc_by_id = {s.id: s for s in services}
 
     for stale in (
         (
@@ -198,24 +337,88 @@ async def _match(session: AsyncSession, job: Job) -> None:
     await session.commit()
 
     created = 0
+    # MỘT phương án cho MỖI sản phẩm. Server tự gom theo product cha nên kể cả
+    # khi model trả dạng phẳng cũ (mỗi dịch vụ một phần tử, trùng sản phẩm)
+    # kết quả vẫn không nhân bản. Field đơn của phương án (painpoint, gói...)
+    # lấy từ dịch vụ điểm cao nhất; chi tiết đầy đủ nằm trong service_matches.
+    grouped: dict[str, dict[str, Any]] = {}
+    order: list[str] = []
     for entry in entries:
-        if not isinstance(entry, dict) or not entry.get("title"):
+        if not isinstance(entry, dict):
             continue
-        product_id = entry.get("productId")
-        if product_id and product_id not in valid_ids:
-            product_id = None
+        svc_items = entry.get("services")
+        if not isinstance(svc_items, list) or not svc_items:
+            svc_items = [entry]  # dạng phẳng cũ -> bọc thành một dịch vụ
+        entry_pid = entry.get("productId")
+        for it in svc_items:
+            if not isinstance(it, dict):
+                continue
+            service_id = it.get("serviceId")
+            svc = svc_by_id.get(service_id) if service_id else None
+            pid = svc.product_id if svc is not None else entry_pid
+            if svc is None:
+                service_id = None
+                if pid and pid not in valid_ids:
+                    pid = None
+            if pid is None:
+                continue
+            try:
+                score = float(max(0, min(100, int(it.get("fitScore") or entry.get("fitScore") or 0))))
+            except (TypeError, ValueError):
+                score = 0.0
+            g = grouped.get(pid)
+            if g is None:
+                g = {"title": entry.get("title") or "", "best": None,
+                     "matches": [], "evidence": [], "seen": set()}
+                grouped[pid] = g
+                order.append(pid)
+            if not g["title"] and entry.get("title"):
+                g["title"] = entry["title"]
+            detail = {
+                "serviceId": service_id,
+                "serviceName": svc.name if svc is not None else None,
+                "fitScore": score,
+                "painpoint": it.get("painpoint"),
+                "opportunity": it.get("opportunity"),
+                "rationale": it.get("rationale"),
+                "expectedImpact": it.get("expectedImpact"),
+                "package": it.get("package"),
+                "pricingNote": it.get("pricingNote"),
+                "evidence": [e for e in (it.get("evidence") or []) if isinstance(e, dict)],
+            }
+            g["matches"].append(detail)
+            for e in detail["evidence"]:
+                key = (e.get("kind"), e.get("id"))
+                if key not in g["seen"]:
+                    g["seen"].add(key)
+                    g["evidence"].append(e)
+            if g["best"] is None or score > g["best"]["fitScore"]:
+                g["best"] = detail
+
+    for pid in order:
+        g = grouped[pid]
+        best = g["best"] or {}
+        title = truncate(str(g["title"] or best.get("serviceName") or ""), 255)
+        if not title:
+            continue
         session.add(
             CustomerSolution(
                 id=CustomerSolution.make_id(),
                 customer_id=customer.id,
-                product_id=product_id,
-                title=truncate(str(entry["title"]), 255),
-                rationale=entry.get("rationale"),
-                fit_score=float(max(0, min(100, int(entry.get("fitScore") or 0)))),
-                expected_impact=entry.get("expectedImpact"),
-                pricing_note=entry.get("pricingNote"),
-                package=entry.get("package"),
-                evidence=[e for e in (entry.get("evidence") or []) if isinstance(e, dict)],
+                product_id=pid,
+                service_id=best.get("serviceId"),
+                service_matches=sorted(
+                    g["matches"], key=lambda m: -(m.get("fitScore") or 0)
+                ),
+                title=title,
+                rationale=best.get("rationale"),
+                painpoint=best.get("painpoint"),
+                opportunity=best.get("opportunity"),
+                fit_score=float(best.get("fitScore") or 0),
+                expected_impact=best.get("expectedImpact"),
+                pricing_note=best.get("pricingNote"),
+                package=best.get("package"),
+                evidence=g["evidence"],
                 job_id=job.id,
             )
         )
@@ -256,6 +459,10 @@ _PRICE_HINT_RE = re.compile(r"(pricing|bang-?gia|gia-?ca|price)", re.I)
 
 FETCH_TIMEOUT = 20.0
 MAX_PAGES = 3
+# Số URL nguồn tối đa cho một sản phẩm (source_url + documents) và tổng số
+# trang đưa vào prompt. Chặn để corpus không phình khi Hub có nhiều tài liệu.
+MAX_SOURCE_URLS = 5
+MAX_TOTAL_PAGES = 6
 MAX_PAGE_CHARS = 24_000
 
 
@@ -344,8 +551,25 @@ async def _crawl(session: AsyncSession, job: Job) -> None:
     pages: list[tuple[str, str]] = []
     source = "fetch"
 
-    if product.source_url:
-        pages = await fetch_pages(product.source_url)
+    # source_url là nguồn chính; documents là tài liệu chính thức được thêm vào
+    # Hub. Trước đây chỉ đọc source_url nên doc thêm vào không vào tri thức.
+    doc_urls = [
+        str(d.get("url") or d.get("href") or d.get("link")).strip()
+        for d in (product.documents or [])
+        if isinstance(d, dict) and (d.get("url") or d.get("href") or d.get("link"))
+    ]
+    seen_urls: set[str] = set()
+    source_urls: list[str] = []
+    for candidate in ([product.source_url] if product.source_url else []) + doc_urls:
+        if candidate and candidate not in seen_urls:
+            seen_urls.add(candidate)
+            source_urls.append(candidate)
+
+    for candidate in source_urls[:MAX_SOURCE_URLS]:
+        if len(pages) >= MAX_TOTAL_PAGES:
+            break
+        fetched = await fetch_pages(candidate)
+        pages.extend(fetched[: MAX_TOTAL_PAGES - len(pages)])
 
     if not pages:
         source = "search"
@@ -365,7 +589,13 @@ async def _crawl(session: AsyncSession, job: Job) -> None:
     await step(session, job, "parse", "Đang cập nhật thông tin sản phẩm", 0.7)
 
     corpus = "\n\n".join(f"[{url}]\n{text}" for url, text in pages)
-    log.info("product_crawl_source", product=product.id, mode=source, pages=len(pages))
+    log.info(
+        "product_crawl_source",
+        product=product.id,
+        mode=source,
+        pages=len(pages),
+        urls=[u for u, _ in pages],
+    )
 
     try:
         completion = await maas.run(

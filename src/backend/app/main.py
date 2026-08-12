@@ -163,7 +163,10 @@ if FRONTEND_DIR.is_dir():
         if found is not None:
             from app.services.prototype import cache as prototype_cache
 
-            return HTMLResponse(prototype_cache.render(found))
+            return HTMLResponse(
+                prototype_cache.render(found),
+                headers={"Cache-Control": "no-store, must-revalidate"},
+            )
         return ORJSONResponse(
             {
                 "error": {
@@ -184,6 +187,20 @@ if FRONTEND_DIR.is_dir():
         if found is None:
             return Response(status_code=204)
         return FileResponse(found, media_type=FAVICON_TYPES[found.suffix.lower()])
+
+    @app.get("/zb-api-bridge.js", include_in_schema=False)
+    async def bridge_js() -> Any:
+        # Phải đi trước mount StaticFiles. StaticFiles chỉ gắn ETag, không gắn
+        # Cache-Control, nên trình duyệt được phép dùng lại bản cũ mà không hỏi
+        # lại — bridge cũ + HTML mới là nguồn gốc lỗi 'xoá rồi vẫn còn'.
+        found = FRONTEND_DIR / "zb-api-bridge.js"
+        if not found.is_file():
+            return Response(status_code=404)
+        return FileResponse(
+            found,
+            media_type="application/javascript",
+            headers={"Cache-Control": "no-cache, must-revalidate"},
+        )
 
     app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
 
