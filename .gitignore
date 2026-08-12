@@ -6,3 +6,9 @@ __pycache__/
 .mypy_cache/
 .pytest_cache/
 .DS_Store
+
+# tư liệu demo/lồng tiếng (chứa API key + audio tạm)
+voiceover-work/
+video demo/
+*.mp4
+.playwright-mcp/
