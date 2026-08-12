@@ -12,3 +12,4 @@ voiceover-work/
 video demo/
 *.mp4
 .playwright-mcp/
+\n# file .bak sinh ra khi patch tren VM\n*.bak\n*.bak-*\n*.bak[a-z]*\n
